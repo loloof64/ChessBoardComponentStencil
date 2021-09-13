@@ -6,56 +6,32 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
-    interface MyComponent {
-        /**
-          * The first name
-         */
-        "first": string;
-        /**
-          * The last name
-         */
-        "last": string;
-        /**
-          * The middle name
-         */
-        "middle": string;
+    interface Loloof64ChessboardStencil {
     }
 }
 declare global {
-    interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {
+    interface HTMLLoloof64ChessboardStencilElement extends Components.Loloof64ChessboardStencil, HTMLStencilElement {
     }
-    var HTMLMyComponentElement: {
-        prototype: HTMLMyComponentElement;
-        new (): HTMLMyComponentElement;
+    var HTMLLoloof64ChessboardStencilElement: {
+        prototype: HTMLLoloof64ChessboardStencilElement;
+        new (): HTMLLoloof64ChessboardStencilElement;
     };
     interface HTMLElementTagNameMap {
-        "my-component": HTMLMyComponentElement;
+        "loloof64-chessboard-stencil": HTMLLoloof64ChessboardStencilElement;
     }
 }
 declare namespace LocalJSX {
-    interface MyComponent {
-        /**
-          * The first name
-         */
-        "first"?: string;
-        /**
-          * The last name
-         */
-        "last"?: string;
-        /**
-          * The middle name
-         */
-        "middle"?: string;
+    interface Loloof64ChessboardStencil {
     }
     interface IntrinsicElements {
-        "my-component": MyComponent;
+        "loloof64-chessboard-stencil": Loloof64ChessboardStencil;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "my-component": LocalJSX.MyComponent & JSXBase.HTMLAttributes<HTMLMyComponentElement>;
+            "loloof64-chessboard-stencil": LocalJSX.Loloof64ChessboardStencil & JSXBase.HTMLAttributes<HTMLLoloof64ChessboardStencilElement>;
         }
     }
 }

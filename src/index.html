@@ -7,8 +7,24 @@
 
     <script type="module" src="/build/loloof64-chessboard-stencil.esm.js"></script>
     <script nomodule src="/build/loloof64-chessboard-stencil.js"></script>
+    <style>
+      loloof64-chessboard-stencil:first-of-type {
+        --loloof64-chessboard-stencil-size: 35vw;
+        --loloof64-chessboard-stencil-background-color: purple;
+      }
+
+      loloof64-chessboard-stencil:last-of-type {
+        --loloof64-chessboard-stencil-size: 20vw;
+        --loloof64-chessboard-stencil-background-color: green;
+      }
+
+      loloof64-chessboard-stencil {
+        margin: 0 40px;
+      }
+    </style>
   </head>
   <body>
-    <my-component first="Stencil" last="'Don't call me a framework' JS"></my-component>
+    <loloof64-chessboard-stencil></loloof64-chessboard-stencil>
+    <loloof64-chessboard-stencil></loloof64-chessboard-stencil>
   </body>
 </html>

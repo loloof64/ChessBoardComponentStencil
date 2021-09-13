@@ -1,0 +1,14 @@
+:host {
+  display: inline-block;
+  width: var(--loloof64-chessboard-stencil-size, 100px);
+  height: var(--loloof64-chessboard-stencil-size, 100px);
+  background-color: var(--loloof64-chessboard-stencil-background-color, #124589);
+}
+
+#lower_layer {
+  display: grid;
+  width: var(--loloof64-chessboard-stencil-size, 100px);
+  height: var(--loloof64-chessboard-stencil-size, 100px);
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+}
