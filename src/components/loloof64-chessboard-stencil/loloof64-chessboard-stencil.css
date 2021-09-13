@@ -1,5 +1,6 @@
 :host {
   display: inline-block;
+  position: relative;
   width: var(--loloof64-chessboard-stencil-size, 100px);
   height: var(--loloof64-chessboard-stencil-size, 100px);
   background-color: var(--loloof64-chessboard-stencil-background-color, #124589);
@@ -7,8 +8,28 @@
 
 #lower_layer {
   display: grid;
+  position: absolute;
   width: var(--loloof64-chessboard-stencil-size, 100px);
   height: var(--loloof64-chessboard-stencil-size, 100px);
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
+}
+
+.coordinate {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--loloof64-chessboard-stencil-coordinate-color, yellow);
+  font-size: calc(var(--loloof64-chessboard-stencil-size) * 0.06);
+  font-weight: bold;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.cell--white {
+  background-color: var(--loloof64-chessboard-stencil-white-cell-color, navajowhite);
+}
+
+.cell--black {
+  background-color: var(--loloof64-chessboard-stencil-black-cell-color, peru);
 }
