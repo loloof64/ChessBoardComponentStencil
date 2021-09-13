@@ -31,5 +31,9 @@
     "puppeteer": "^10.0.0"
   },
   "license": "MIT",
-  "author": "Laurent Bernabe <laurent.bernabe@gmail.com>"
+  "author": "Laurent Bernabe <laurent.bernabe@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loloof64/ChessBoardComponentStencil"
+  }
 }
