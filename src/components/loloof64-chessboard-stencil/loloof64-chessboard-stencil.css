@@ -76,3 +76,15 @@
   border-radius: 60%;
   background-color: black;
 }
+
+.cell--dndorigin {
+  background-color: var(--loloof64-chessboard-stencil-dnd-origin, crimson);
+}
+
+.cell--dndtarget {
+  background-color: var(--loloof64-chessboard-stencil-dnd-target, forestGreen);
+}
+
+.cell--dndcross {
+  background-color: var(--loloof64-chessboard-stencil-dnd-end, dimGray);
+}

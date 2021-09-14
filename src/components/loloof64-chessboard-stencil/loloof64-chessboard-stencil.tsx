@@ -133,18 +133,21 @@ export class Loloof64ChessboardStencil {
     };
   }
 
-  @Listen('mousemove', {passive: false})
+  @Listen('mousemove', { passive: false })
   handleMouseMove(evt: MouseEvent) {
     evt.preventDefault();
-    if (!this.dndPieceData) return;
+    if (!this.dndPieceData.piece) return
 
     const [x, y] = this.getLocalCoordinates(evt);
+    const [file, rank] = this.getCell(x, y);
 
     this.dndPieceData = {
       ...this.dndPieceData,
       x,
       y,
-    }
+      endFile: file,
+      endRank: rank,
+    };
   }
 
   @Listen('mouseup', { passive: false })
@@ -157,6 +160,30 @@ export class Loloof64ChessboardStencil {
   handleMouseLeave(evt: MouseEvent) {
     evt.preventDefault();
     this.cancelDragAndDrop();
+  }
+
+  isDndCrossCell(col: number, row: number): boolean {
+    if (!this.dndPieceData.piece) return false;
+    const file = this.reversed ? 7-col : col;
+    const rank = this.reversed ? row : 7-row;
+
+    return file === this.dndPieceData.endFile || rank === this.dndPieceData.endRank;
+  }
+
+  isDndOriginCell(col: number, row: number): boolean {
+    if (!this.dndPieceData.piece) return false;
+    const file = this.reversed ? 7-col : col;
+    const rank = this.reversed ? row : 7-row;
+
+    return file === this.dndPieceData.startFile && rank === this.dndPieceData.startRank;
+  }
+
+  isDndTargetCell(col: number, row: number): boolean {
+    if (!this.dndPieceData.piece) return false;
+    const file = this.reversed ? 7-col : col;
+    const rank = this.reversed ? row : 7-row;
+
+    return file === this.dndPieceData.endFile && rank === this.dndPieceData.endRank;
   }
 
   render() {
@@ -223,7 +250,10 @@ export class Loloof64ChessboardStencil {
                 {[
                   ...[0, 1, 2, 3, 4, 5, 6, 7].map(colIndex => {
                     const isWhiteCell = (colIndex + rowIndex) % 2 == 0;
-                    const classes = isWhiteCell ? 'cell cell--white' : 'cell cell--black';
+                    let classes = isWhiteCell ? 'cell cell--white' : 'cell cell--black';
+                    if (this.isDndCrossCell(colIndex, rowIndex)) classes = 'cell cell--dndcross';
+                    if (this.isDndOriginCell(colIndex, rowIndex)) classes = 'cell cell--dndorigin';
+                    if (this.isDndTargetCell(colIndex, rowIndex)) classes = 'cell cell--dndtarget';
                     const pieceImage = this.getImageAtCell(colIndex, rowIndex);
                     return (
                       <div class={classes} key={'cell_' + rowIndex + colIndex}>
