@@ -28,6 +28,10 @@ export class Loloof64ChessboardStencil {
   @State() logicalBoard: ChessInstance = new Chess();
   @State() dndPieceData: DndPiece = {};
 
+  getSquareFromCoordinates(file: number, rank: number): Square {
+    return (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;
+  }
+
   getImageAtCell(col: number, row: number): string {
     const file = this.reversed ? 7 - col : col;
     const rank = this.reversed ? row : 7 - row;
@@ -37,7 +41,7 @@ export class Loloof64ChessboardStencil {
       if (isDraggedPieceCell) return;
     }
 
-    const cellAlgebraic = (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;
+    const cellAlgebraic = this.getSquareFromCoordinates(file, rank);
     const piece = this.logicalBoard.get(cellAlgebraic);
 
     if (!piece) return;
@@ -94,7 +98,7 @@ export class Loloof64ChessboardStencil {
   }
 
   getPiece(file: number, rank: number): Piece {
-    const square = (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;
+    const square = this.getSquareFromCoordinates(file, rank);
     const piece = this.logicalBoard.get(square);
     return piece;
   }
@@ -136,7 +140,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mousemove', { passive: false })
   handleMouseMove(evt: MouseEvent) {
     evt.preventDefault();
-    if (!this.dndPieceData.piece) return
+    if (!this.dndPieceData.piece) return;
 
     const [x, y] = this.getLocalCoordinates(evt);
     const [file, rank] = this.getCell(x, y);
@@ -153,6 +157,26 @@ export class Loloof64ChessboardStencil {
   @Listen('mouseup', { passive: false })
   handleMouseUp(evt: MouseEvent) {
     evt.preventDefault();
+    if (!this.dndPieceData.piece) return;
+
+    const [x, y] = this.getLocalCoordinates(evt);
+    const [targetFile, targetRank] = this.getCell(x, y);
+
+    const { startFile: originFile, startRank: originRank } = this.dndPieceData;
+
+    const originSquare = this.getSquareFromCoordinates(originFile, originRank);
+    const targetSquare = this.getSquareFromCoordinates(targetFile, targetRank);
+
+    const boardLogicCopy = new Chess(this.logicalBoard.fen());
+    const moveTryResult = boardLogicCopy.move({ from: originSquare, to: targetSquare });
+
+    if (!moveTryResult) {
+      this.cancelDragAndDrop();
+      return;
+    }
+
+    this.logicalBoard.move({ from: originSquare, to: targetSquare });
+
     this.cancelDragAndDrop();
   }
 
@@ -164,24 +188,24 @@ export class Loloof64ChessboardStencil {
 
   isDndCrossCell(col: number, row: number): boolean {
     if (!this.dndPieceData.piece) return false;
-    const file = this.reversed ? 7-col : col;
-    const rank = this.reversed ? row : 7-row;
+    const file = this.reversed ? 7 - col : col;
+    const rank = this.reversed ? row : 7 - row;
 
     return file === this.dndPieceData.endFile || rank === this.dndPieceData.endRank;
   }
 
   isDndOriginCell(col: number, row: number): boolean {
     if (!this.dndPieceData.piece) return false;
-    const file = this.reversed ? 7-col : col;
-    const rank = this.reversed ? row : 7-row;
+    const file = this.reversed ? 7 - col : col;
+    const rank = this.reversed ? row : 7 - row;
 
     return file === this.dndPieceData.startFile && rank === this.dndPieceData.startRank;
   }
 
   isDndTargetCell(col: number, row: number): boolean {
     if (!this.dndPieceData.piece) return false;
-    const file = this.reversed ? 7-col : col;
-    const rank = this.reversed ? row : 7-row;
+    const file = this.reversed ? 7 - col : col;
+    const rank = this.reversed ? row : 7 - row;
 
     return file === this.dndPieceData.endFile && rank === this.dndPieceData.endRank;
   }
