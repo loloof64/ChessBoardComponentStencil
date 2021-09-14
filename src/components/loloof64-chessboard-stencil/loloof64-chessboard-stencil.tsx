@@ -1,5 +1,5 @@
 import { Component, h, Fragment, State, getAssetPath, Prop, Listen } from '@stencil/core';
-import { Chess, ChessInstance, Piece, Square } from 'chess.js';
+import { Chess, ChessInstance, Piece, ShortMove, Square } from 'chess.js';
 
 interface DndPiece {
   startFile?: number;
@@ -9,6 +9,15 @@ interface DndPiece {
   x?: number;
   y?: number;
   piece?: Piece;
+}
+
+interface PromotionRequest {
+  startFile?: number;
+  startRank?: number;
+  endFile?: number;
+  endRank?: number;
+  draggedPieceX?: number;
+  draggedPieceY?: number;
 }
 
 @Component({
@@ -27,6 +36,7 @@ export class Loloof64ChessboardStencil {
 
   @State() logicalBoard: ChessInstance = new Chess();
   @State() dndPieceData: DndPiece = {};
+  @State() promotionRequest: PromotionRequest = {};
 
   getSquareFromCoordinates(file: number, rank: number): Square {
     return (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;
@@ -116,6 +126,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mousedown', { passive: false })
   handleMouseDown(evt: MouseEvent) {
     evt.preventDefault();
+    if (this.promotionRequest.startFile) return;
 
     const componentSize = this.dragLayerElement.getBoundingClientRect().width;
     const cellsSize = componentSize * 0.1;
@@ -141,6 +152,7 @@ export class Loloof64ChessboardStencil {
   handleMouseMove(evt: MouseEvent) {
     evt.preventDefault();
     if (!this.dndPieceData.piece) return;
+    if (this.promotionRequest.startFile) return;
 
     const [x, y] = this.getLocalCoordinates(evt);
     const [file, rank] = this.getCell(x, y);
@@ -157,6 +169,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mouseup', { passive: false })
   handleMouseUp(evt: MouseEvent) {
     evt.preventDefault();
+    if (this.promotionRequest.startFile) return;
     if (!this.dndPieceData.piece) return;
 
     const [x, y] = this.getLocalCoordinates(evt);
@@ -169,6 +182,21 @@ export class Loloof64ChessboardStencil {
 
     const boardLogicCopy = new Chess(this.logicalBoard.fen());
     const moveTryResult = boardLogicCopy.move({ from: originSquare, to: targetSquare });
+
+    const isPromotionMove =
+      (this.dndPieceData.piece.type === 'p' && this.dndPieceData.piece.color === 'w' && this.dndPieceData.startRank === 6 && this.dndPieceData.endRank === 7) ||
+      (this.dndPieceData.piece.type === 'p' && this.dndPieceData.piece.color === 'b' && this.dndPieceData.startRank === 1 && this.dndPieceData.endRank === 0);
+    if (isPromotionMove) {
+      this.promotionRequest = {
+        startFile: originFile,
+        startRank: originRank,
+        endFile: targetFile,
+        endRank: targetRank,
+        draggedPieceX: x,
+        draggedPieceY: y,
+      };
+      return;
+    }
 
     if (!moveTryResult) {
       this.cancelDragAndDrop();
@@ -183,6 +211,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mouseleave', { passive: false })
   handleMouseLeave(evt: MouseEvent) {
     evt.preventDefault();
+    if (this.promotionRequest.startFile) return;
     this.cancelDragAndDrop();
   }
 
@@ -208,6 +237,25 @@ export class Loloof64ChessboardStencil {
     const rank = this.reversed ? row : 7 - row;
 
     return file === this.dndPieceData.endFile && rank === this.dndPieceData.endRank;
+  }
+
+  commitPromotion(pieceType: string) {
+    if (!this.promotionRequest.startFile) return;
+    if (!['n', 'b', 'r', 'q'].includes(pieceType)) return;
+
+    const originSquare = this.getSquareFromCoordinates(this.promotionRequest.startFile, this.promotionRequest.startRank);
+    const targetSquare = this.getSquareFromCoordinates(this.promotionRequest.endFile, this.promotionRequest.endRank);
+
+    this.logicalBoard.move({from: originSquare, to: targetSquare, promotion: pieceType as ShortMove['promotion']});
+
+    this.promotionRequest = {
+      startFile: undefined,
+      startRank: undefined,
+      endFile: undefined,
+      endRank: undefined,
+    }
+
+    this.cancelDragAndDrop();
   }
 
   render() {
@@ -248,6 +296,11 @@ export class Loloof64ChessboardStencil {
           top: this.dndPieceData.y.toString() + 'px',
         }
       : {};
+
+    const promotionKnight = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_nlt45.svg') : getAssetPath('./assets/chess_vectors/Chess_ndt45.svg');
+    const promotionBishop = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_blt45.svg') : getAssetPath('./assets/chess_vectors/Chess_bdt45.svg');
+    const promotionRook = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_rlt45.svg') : getAssetPath('./assets/chess_vectors/Chess_rdt45.svg');
+    const promotionQueen = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_qlt45.svg') : getAssetPath('./assets/chess_vectors/Chess_qdt45.svg');
 
     return (
       <Fragment>
@@ -311,6 +364,17 @@ export class Loloof64ChessboardStencil {
         <div id="dnd_layer" ref={el => (this.dragLayerElement = el as HTMLDivElement)}>
           {draggedImage && <img src={draggedImage} class="dragged_piece" style={draggedPieceStyle}></img>}
         </div>
+
+        {this.promotionRequest.startFile && (
+          <div id="promotion_dialog_backdrop">
+            <div id="promotion_dialog_content">
+              <img class="promotion_button" onClick={() => this.commitPromotion('n')} src={promotionKnight}></img>
+              <img class="promotion_button" onClick={() => this.commitPromotion('b')} src={promotionBishop}></img>
+              <img class="promotion_button" onClick={() => this.commitPromotion('r')} src={promotionRook}></img>
+              <img class="promotion_button" onClick={() => this.commitPromotion('q')} src={promotionQueen}></img>
+            </div>
+          </div>
+        )}
       </Fragment>
     );
   }
