@@ -1,6 +1,6 @@
 {
   "name": "loloof64-chessboard-stencil",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A chess board web component",
   "main": "dist/index.cjs.js",
   "module": "dist/custom-elements/index.js",
@@ -22,7 +22,9 @@
     "generate": "stencil generate"
   },
   "dependencies": {
-    "@stencil/core": "^2.7.0"
+    "@stencil/core": "^2.7.0",
+    "@types/chess.js": "^0.11.2",
+    "chess.js": "^0.12.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",

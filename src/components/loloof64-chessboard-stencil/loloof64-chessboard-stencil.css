@@ -33,3 +33,20 @@
 .cell--black {
   background-color: var(--loloof64-chessboard-stencil-black-cell-color, peru);
 }
+
+#dnd_layer {
+  position: absolute;
+  width: var(--loloof64-chessboard-stencil-size, 100px);
+  height: var(--loloof64-chessboard-stencil-size, 100px);
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cell_piece {
+  width: calc(var(--loloof64-chessboard-stencil-size, 100px) * 0.1);
+  height: calc(var(--loloof64-chessboard-stencil-size, 100px) * 0.1);
+}

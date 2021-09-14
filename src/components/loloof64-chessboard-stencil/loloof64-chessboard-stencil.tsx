@@ -1,11 +1,53 @@
-import { Component, h, Fragment } from '@stencil/core';
+import { Component, h, Fragment, State, getAssetPath } from '@stencil/core';
+import { Chess, ChessInstance, Square } from 'chess.js';
 
 @Component({
   tag: 'loloof64-chessboard-stencil',
   styleUrl: 'loloof64-chessboard-stencil.css',
   shadow: true,
+  assetsDirs: ['assets/chess_vectors'],
 })
 export class Loloof64ChessboardStencil {
+  @State() logicalBoard: ChessInstance = new Chess();
+
+  getImageAtCell(col: number, row: number) {
+    const file = col;
+    const rank = 7 - row;
+
+    const cellAlgebraic = (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;
+    const piece = this.logicalBoard.get(cellAlgebraic);
+
+    if (!piece) return;
+
+    let pieceCode: string;
+
+    switch (piece.type) {
+      case 'p':
+        pieceCode = piece.color === 'w' ? 'pl' : 'pd';
+        break;
+      case 'n':
+        pieceCode = piece.color === 'w' ? 'nl' : 'nd';
+        break;
+      case 'b':
+        pieceCode = piece.color === 'w' ? 'bl' : 'bd';
+        break;
+      case 'r':
+        pieceCode = piece.color === 'w' ? 'rl' : 'rd';
+        break;
+      case 'q':
+        pieceCode = piece.color === 'w' ? 'ql' : 'qd';
+        break;
+      case 'k':
+        pieceCode = piece.color === 'w' ? 'kl' : 'kd';
+        break;
+    }
+
+    if (!pieceCode) return;
+
+    const path = `./assets/chess_vectors/Chess_${pieceCode}t45.svg`;
+    return getAssetPath(path);
+  }
+
   render() {
     return (
       <Fragment>
@@ -32,8 +74,13 @@ export class Loloof64ChessboardStencil {
                 {[
                   ...[0, 1, 2, 3, 4, 5, 6, 7].map(colIndex => {
                     const isWhiteCell = (colIndex + rowIndex) % 2 == 0;
-                    const classes = isWhiteCell ? 'cell--white' : 'cell--black';
-                    return <div class={classes} key={'cell_' + rowIndex + colIndex}></div>;
+                    const classes = isWhiteCell ? 'cell cell--white' : 'cell cell--black';
+                    const pieceImage = this.getImageAtCell(colIndex, rowIndex);
+                    return (
+                      <div class={classes} key={'cell_' + rowIndex + colIndex}>
+                        {pieceImage && <img class="cell_piece" src={pieceImage}></img>}
+                      </div>
+                    );
                   }),
                 ]}
                 <p class="coordinate" key={'right_coord_' + rowIndex}>
@@ -55,6 +102,8 @@ export class Loloof64ChessboardStencil {
           })}
           <div></div>
         </div>
+
+        <div id="dnd_layer"></div>
       </Fragment>
     );
   }
