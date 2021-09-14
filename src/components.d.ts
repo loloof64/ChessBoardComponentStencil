@@ -7,6 +7,9 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface Loloof64ChessboardStencil {
+        /**
+          * True if and only if the black side is at bottom
+         */
         "reversed": boolean;
     }
 }
@@ -23,6 +26,9 @@ declare global {
 }
 declare namespace LocalJSX {
     interface Loloof64ChessboardStencil {
+        /**
+          * True if and only if the black side is at bottom
+         */
         "reversed"?: boolean;
     }
     interface IntrinsicElements {

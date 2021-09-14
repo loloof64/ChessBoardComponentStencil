@@ -8,8 +8,12 @@ import { Chess, ChessInstance, Square } from 'chess.js';
   assetsDirs: ['assets/chess_vectors'],
 })
 export class Loloof64ChessboardStencil {
-  @State() logicalBoard: ChessInstance = new Chess();
+  /** 
+  True if and only if the black side is at bottom 
+  */
   @Prop() reversed: boolean = false;
+
+  @State() logicalBoard: ChessInstance = new Chess();
 
   getImageAtCell(col: number, row: number) {
     const file = this.reversed ? 7 - col : col;
