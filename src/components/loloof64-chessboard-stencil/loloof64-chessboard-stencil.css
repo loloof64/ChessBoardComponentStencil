@@ -50,3 +50,23 @@
   width: calc(var(--loloof64-chessboard-stencil-size, 100px) * 0.1);
   height: calc(var(--loloof64-chessboard-stencil-size, 100px) * 0.1);
 }
+
+.turn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.turn--white {
+  width: 60%;
+  height: 60%;
+  border-radius: 60%;
+  background-color: white;
+}
+
+.turn--black {
+  width: 60%;
+  height: 60%;
+  border-radius: 60%;
+  background-color: black;
+}

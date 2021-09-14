@@ -49,6 +49,9 @@ export class Loloof64ChessboardStencil {
   }
 
   render() {
+    const isWhiteTurn = this.logicalBoard.turn() === 'w';
+    const turnClasses = isWhiteTurn ? 'turn--white' : 'turn--black';
+
     return (
       <Fragment>
         <div id="lower_layer">
@@ -100,7 +103,9 @@ export class Loloof64ChessboardStencil {
               </p>
             );
           })}
-          <div></div>
+          <div class="turn">
+            <div class={turnClasses}></div>
+          </div>
         </div>
 
         <div id="dnd_layer"></div>
