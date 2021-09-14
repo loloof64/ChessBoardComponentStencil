@@ -1,5 +1,15 @@
-import { Component, h, Fragment, State, getAssetPath, Prop } from '@stencil/core';
-import { Chess, ChessInstance, Square } from 'chess.js';
+import { Component, h, Fragment, State, getAssetPath, Prop, Listen } from '@stencil/core';
+import { Chess, ChessInstance, Piece, Square } from 'chess.js';
+
+interface DndPiece {
+  startFile?: number;
+  startRank?: number;
+  endFile?: number;
+  endRank?: number;
+  x?: number;
+  y?: number;
+  piece?: Piece;
+}
 
 @Component({
   tag: 'loloof64-chessboard-stencil',
@@ -13,11 +23,19 @@ export class Loloof64ChessboardStencil {
   */
   @Prop() reversed: boolean = false;
 
-  @State() logicalBoard: ChessInstance = new Chess();
+  dragLayerElement!: HTMLDivElement;
 
-  getImageAtCell(col: number, row: number) {
+  @State() logicalBoard: ChessInstance = new Chess();
+  @State() dndPieceData: DndPiece = {};
+
+  getImageAtCell(col: number, row: number): string {
     const file = this.reversed ? 7 - col : col;
     const rank = this.reversed ? row : 7 - row;
+
+    if (this.dndPieceData) {
+      const isDraggedPieceCell = file === this.dndPieceData.startFile && rank === this.dndPieceData.startRank;
+      if (isDraggedPieceCell) return;
+    }
 
     const cellAlgebraic = (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;
     const piece = this.logicalBoard.get(cellAlgebraic);
@@ -53,9 +71,132 @@ export class Loloof64ChessboardStencil {
     return getAssetPath(path);
   }
 
+  getLocalCoordinates(event: MouseEvent): Array<number> {
+    if (!this.dragLayerElement) return;
+
+    const thisComponentLocation = this.dragLayerElement.getBoundingClientRect();
+    const localX = event.clientX - thisComponentLocation.x;
+    const localY = event.clientY - thisComponentLocation.y;
+
+    return [localX, localY];
+  }
+
+  getCell(x: number, y: number): Array<number> {
+    const componentSize = this.dragLayerElement.getBoundingClientRect().width;
+    const cellsSize = componentSize * 0.1;
+    const cellX = Math.floor((x - cellsSize) / cellsSize);
+    const cellY = Math.floor((y - cellsSize) / cellsSize);
+
+    const file = this.reversed ? 7 - cellX : cellX;
+    const rank = this.reversed ? cellY : 7 - cellY;
+
+    return [file, rank];
+  }
+
+  getPiece(file: number, rank: number): Piece {
+    const square = (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;
+    const piece = this.logicalBoard.get(square);
+    return piece;
+  }
+
+  cancelDragAndDrop() {
+    this.dndPieceData = {
+      startFile: undefined,
+      startRank: undefined,
+      endFile: undefined,
+      endRank: undefined,
+      piece: undefined,
+    };
+  }
+
+  @Listen('mousedown', { passive: false })
+  handleMouseDown(evt: MouseEvent) {
+    evt.preventDefault();
+
+    const componentSize = this.dragLayerElement.getBoundingClientRect().width;
+    const cellsSize = componentSize * 0.1;
+
+    const [x, y] = this.getLocalCoordinates(evt);
+    const [file, rank] = this.getCell(x, y);
+
+    const piece = this.getPiece(file, rank);
+    if (!piece) return;
+
+    this.dndPieceData = {
+      startFile: file,
+      startRank: rank,
+      endFile: undefined,
+      endRank: undefined,
+      piece,
+      x: cellsSize * (this.reversed ? 8 - file : file + 1),
+      y: cellsSize * (this.reversed ? rank + 1 : 8 - rank),
+    };
+  }
+
+  @Listen('mousemove', {passive: false})
+  handleMouseMove(evt: MouseEvent) {
+    evt.preventDefault();
+    if (!this.dndPieceData) return;
+
+    const [x, y] = this.getLocalCoordinates(evt);
+
+    this.dndPieceData = {
+      ...this.dndPieceData,
+      x,
+      y,
+    }
+  }
+
+  @Listen('mouseup', { passive: false })
+  handleMouseUp(evt: MouseEvent) {
+    evt.preventDefault();
+    this.cancelDragAndDrop();
+  }
+
+  @Listen('mouseleave', { passive: false })
+  handleMouseLeave(evt: MouseEvent) {
+    evt.preventDefault();
+    this.cancelDragAndDrop();
+  }
+
   render() {
     const isWhiteTurn = this.logicalBoard.turn() === 'w';
     const turnClasses = isWhiteTurn ? 'turn--white' : 'turn--black';
+
+    const whitePawnDragged = this.dndPieceData.piece?.type === 'p' && this.dndPieceData.piece?.color === 'w';
+    const whiteKnightDragged = this.dndPieceData.piece?.type === 'n' && this.dndPieceData.piece?.color === 'w';
+    const whiteBishopDragged = this.dndPieceData.piece?.type === 'b' && this.dndPieceData.piece?.color === 'w';
+    const whiteRookDragged = this.dndPieceData.piece?.type === 'r' && this.dndPieceData.piece?.color === 'w';
+    const whiteQueenDragged = this.dndPieceData.piece?.type === 'q' && this.dndPieceData.piece?.color === 'w';
+    const whiteKingDragged = this.dndPieceData.piece?.type === 'k' && this.dndPieceData.piece?.color === 'w';
+
+    const blackPawnDragged = this.dndPieceData.piece?.type === 'p' && this.dndPieceData.piece?.color === 'b';
+    const blackKnightDragged = this.dndPieceData.piece?.type === 'n' && this.dndPieceData.piece?.color === 'b';
+    const blackBishopDragged = this.dndPieceData.piece?.type === 'b' && this.dndPieceData.piece?.color === 'b';
+    const blackRookDragged = this.dndPieceData.piece?.type === 'r' && this.dndPieceData.piece?.color === 'b';
+    const blackQueenDragged = this.dndPieceData.piece?.type === 'q' && this.dndPieceData.piece?.color === 'b';
+    const blackKingDragged = this.dndPieceData.piece?.type === 'k' && this.dndPieceData.piece?.color === 'b';
+
+    let draggedImage: string;
+    if (whitePawnDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_plt45.svg');
+    if (whiteKnightDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_nlt45.svg');
+    if (whiteBishopDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_blt45.svg');
+    if (whiteRookDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_rlt45.svg');
+    if (whiteQueenDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_qlt45.svg');
+    if (whiteKingDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_klt45.svg');
+    if (blackPawnDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_pdt45.svg');
+    if (blackKnightDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_ndt45.svg');
+    if (blackBishopDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_bdt45.svg');
+    if (blackRookDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_rdt45.svg');
+    if (blackQueenDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_qdt45.svg');
+    if (blackKingDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_kdt45.svg');
+
+    const draggedPieceStyle = draggedImage
+      ? {
+          left: this.dndPieceData.x.toString() + 'px',
+          top: this.dndPieceData.y.toString() + 'px',
+        }
+      : {};
 
     return (
       <Fragment>
@@ -63,7 +204,7 @@ export class Loloof64ChessboardStencil {
           <div></div>
           {[0, 1, 2, 3, 4, 5, 6, 7].map(colIndex => {
             const key = 'top_coord_' + colIndex;
-            const letter = String.fromCharCode('A'.charCodeAt(0) + (this.reversed ? 7- colIndex : colIndex));
+            const letter = String.fromCharCode('A'.charCodeAt(0) + (this.reversed ? 7 - colIndex : colIndex));
             return (
               <p class="coordinate" key={key}>
                 {letter}
@@ -101,7 +242,7 @@ export class Loloof64ChessboardStencil {
           <div></div>
           {[0, 1, 2, 3, 4, 5, 6, 7].map(colIndex => {
             const key = 'bottom_coord_' + colIndex;
-            const letter = String.fromCharCode('A'.charCodeAt(0) + (this.reversed ? 7- colIndex : colIndex));
+            const letter = String.fromCharCode('A'.charCodeAt(0) + (this.reversed ? 7 - colIndex : colIndex));
             return (
               <p class="coordinate" key={key}>
                 {letter}
@@ -113,7 +254,9 @@ export class Loloof64ChessboardStencil {
           </div>
         </div>
 
-        <div id="dnd_layer"></div>
+        <div id="dnd_layer" ref={el => (this.dragLayerElement = el as HTMLDivElement)}>
+          {draggedImage && <img src={draggedImage} class="dragged_piece" style={draggedPieceStyle}></img>}
+        </div>
       </Fragment>
     );
   }

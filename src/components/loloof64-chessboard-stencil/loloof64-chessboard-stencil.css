@@ -40,6 +40,12 @@
   height: var(--loloof64-chessboard-stencil-size, 100px);
 }
 
+.dragged_piece {
+  position: absolute;
+  width: calc(var(--loloof64-chessboard-stencil-size, 100px) * 0.1);
+  height: calc(var(--loloof64-chessboard-stencil-size, 100px) * 0.1);
+}
+
 .cell {
   display: flex;
   justify-content: center;
