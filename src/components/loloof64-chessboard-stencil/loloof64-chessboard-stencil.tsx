@@ -395,10 +395,10 @@ export class Loloof64ChessboardStencil {
         {this.promotionRequest.startFile && (
           <div id="promotion_dialog_backdrop">
             <div id="promotion_dialog_content">
-              <img class="promotion_button" onClick={() => this.commitPromotion('n')} src={promotionKnight}></img>
-              <img class="promotion_button" onClick={() => this.commitPromotion('b')} src={promotionBishop}></img>
-              <img class="promotion_button" onClick={() => this.commitPromotion('r')} src={promotionRook}></img>
               <img class="promotion_button" onClick={() => this.commitPromotion('q')} src={promotionQueen}></img>
+              <img class="promotion_button" onClick={() => this.commitPromotion('r')} src={promotionRook}></img>
+              <img class="promotion_button" onClick={() => this.commitPromotion('b')} src={promotionBishop}></img>
+              <img class="promotion_button" onClick={() => this.commitPromotion('n')} src={promotionKnight}></img>
             </div>
           </div>
         )}
