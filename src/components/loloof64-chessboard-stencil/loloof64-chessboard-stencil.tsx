@@ -1,4 +1,4 @@
-import { Component, h, Fragment, State, getAssetPath, Prop, Listen } from '@stencil/core';
+import { Component, h, Fragment, State, getAssetPath, Prop, Listen, Watch } from '@stencil/core';
 import { Chess, ChessInstance, Piece, ShortMove, Square } from 'chess.js';
 
 interface DndPiece {
@@ -33,6 +33,7 @@ export class Loloof64ChessboardStencil {
   @Prop() reversed: boolean = false;
 
   dragLayerElement!: HTMLDivElement;
+  draggedPieceElement!: HTMLImageElement;
 
   @State() logicalBoard: ChessInstance = new Chess();
   @State() dndPieceData: DndPiece = {};
@@ -172,6 +173,9 @@ export class Loloof64ChessboardStencil {
     if (this.promotionRequest.startFile) return;
     if (!this.dndPieceData.piece) return;
 
+    const componentSize = this.dragLayerElement.getBoundingClientRect().width;
+    const cellsSize = componentSize * 0.1;
+
     const [x, y] = this.getLocalCoordinates(evt);
     const [targetFile, targetRank] = this.getCell(x, y);
 
@@ -181,12 +185,27 @@ export class Loloof64ChessboardStencil {
     const targetSquare = this.getSquareFromCoordinates(targetFile, targetRank);
 
     const boardLogicCopy = new Chess(this.logicalBoard.fen());
-    const moveTryResult = boardLogicCopy.move({ from: originSquare, to: targetSquare });
+    const moveTryResult = boardLogicCopy.move({ from: originSquare, to: targetSquare, promotion: 'q' as ShortMove['promotion'] });
+
+    if (!moveTryResult) {
+      this.cancelDragAndDrop();
+      return;
+    }
 
     const isPromotionMove =
       (this.dndPieceData.piece.type === 'p' && this.dndPieceData.piece.color === 'w' && this.dndPieceData.startRank === 6 && this.dndPieceData.endRank === 7) ||
       (this.dndPieceData.piece.type === 'p' && this.dndPieceData.piece.color === 'b' && this.dndPieceData.startRank === 1 && this.dndPieceData.endRank === 0);
     if (isPromotionMove) {
+      /*
+      Centering the moved piece along in the target cell : better for handling board reversing
+       */
+
+      const left = cellsSize * (this.reversed ? 8 - this.dndPieceData.endFile : this.dndPieceData.endFile + 1);
+      const top = cellsSize * (this.reversed ? this.dndPieceData.endRank + 1 : 8 - this.dndPieceData.endRank);
+
+      this.draggedPieceElement.style.left = left + 'px';
+      this.draggedPieceElement.style.top = top + 'px';
+
       this.promotionRequest = {
         startFile: originFile,
         startRank: originRank,
@@ -195,11 +214,6 @@ export class Loloof64ChessboardStencil {
         draggedPieceX: x,
         draggedPieceY: y,
       };
-      return;
-    }
-
-    if (!moveTryResult) {
-      this.cancelDragAndDrop();
       return;
     }
 
@@ -246,16 +260,29 @@ export class Loloof64ChessboardStencil {
     const originSquare = this.getSquareFromCoordinates(this.promotionRequest.startFile, this.promotionRequest.startRank);
     const targetSquare = this.getSquareFromCoordinates(this.promotionRequest.endFile, this.promotionRequest.endRank);
 
-    this.logicalBoard.move({from: originSquare, to: targetSquare, promotion: pieceType as ShortMove['promotion']});
+    this.logicalBoard.move({ from: originSquare, to: targetSquare, promotion: pieceType as ShortMove['promotion'] });
 
     this.promotionRequest = {
       startFile: undefined,
       startRank: undefined,
       endFile: undefined,
       endRank: undefined,
-    }
+    };
 
     this.cancelDragAndDrop();
+  }
+
+  @Watch('reversed')
+  updatePendingPromotionPieceIfNecessary() {
+    if (this.draggedPieceElement) {
+      const componentSize = this.dragLayerElement.getBoundingClientRect().width;
+      const cellsSize = componentSize * 0.1;
+      const left = cellsSize * (this.reversed ? 8 - this.dndPieceData.endFile : this.dndPieceData.endFile + 1);
+      const top = cellsSize * (this.reversed ? this.dndPieceData.endRank + 1 : 8 - this.dndPieceData.endRank);
+
+      this.draggedPieceElement.style.left = left + 'px';
+      this.draggedPieceElement.style.top = top + 'px';
+    }
   }
 
   render() {
@@ -362,7 +389,7 @@ export class Loloof64ChessboardStencil {
         </div>
 
         <div id="dnd_layer" ref={el => (this.dragLayerElement = el as HTMLDivElement)}>
-          {draggedImage && <img src={draggedImage} class="dragged_piece" style={draggedPieceStyle}></img>}
+          {draggedImage && <img src={draggedImage} class="dragged_piece" ref={el => (this.draggedPieceElement = el as HTMLImageElement)} style={draggedPieceStyle}></img>}
         </div>
 
         {this.promotionRequest.startFile && (

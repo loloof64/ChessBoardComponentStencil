@@ -27,7 +27,24 @@
     </style>
   </head>
   <body>
-    <loloof64-chessboard-stencil></loloof64-chessboard-stencil>
-    <loloof64-chessboard-stencil reversed></loloof64-chessboard-stencil>
+    <loloof64-chessboard-stencil id="board1"></loloof64-chessboard-stencil>
+    <loloof64-chessboard-stencil id="board2"></loloof64-chessboard-stencil>
+    <button id="reverseButton">Reverse sides</button>
+
+    <script>
+      const board1 = document.querySelector('#board1');
+      const board2 = document.querySelector('#board2');
+      const reverseButton = document.querySelector('#reverseButton');
+      let reversed = false;
+
+      reverseButton.addEventListener('click', () => {
+        reversed = !reversed;
+        board1.setAttribute('reversed', reversed);
+        board2.setAttribute('reversed', !reversed);
+      });
+
+      board1.setAttribute('reversed', reversed);
+      board2.setAttribute('reversed', !reversed);
+    </script>
   </body>
 </html>
