@@ -1,6 +1,11 @@
 # loloof64-chessboard-stencil
 
-A chess board web component
+A chess board web component.
+
+* You can play legal moves for sides for which you define an human mode. If a side has a external mode, you must give the legal moves manually, by calling the method `playMove`
+* A dialog is shown to you for choosing the promotion piece (clicking outside buttons dismiss it)
+* Events are sent when game is finished, as well as a move has been done on the board (i mean in human mode)
+* You can configure several colors: cells, coordinates, hovering cell indicator, ...
 
 ## CSS variables
 
