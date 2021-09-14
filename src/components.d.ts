@@ -7,6 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface Loloof64ChessboardStencil {
+        "reversed": boolean;
     }
 }
 declare global {
@@ -22,6 +23,7 @@ declare global {
 }
 declare namespace LocalJSX {
     interface Loloof64ChessboardStencil {
+        "reversed"?: boolean;
     }
     interface IntrinsicElements {
         "loloof64-chessboard-stencil": Loloof64ChessboardStencil;

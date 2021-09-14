@@ -1,4 +1,4 @@
-import { Component, h, Fragment, State, getAssetPath } from '@stencil/core';
+import { Component, h, Fragment, State, getAssetPath, Prop } from '@stencil/core';
 import { Chess, ChessInstance, Square } from 'chess.js';
 
 @Component({
@@ -9,10 +9,11 @@ import { Chess, ChessInstance, Square } from 'chess.js';
 })
 export class Loloof64ChessboardStencil {
   @State() logicalBoard: ChessInstance = new Chess();
+  @Prop() reversed: boolean = false;
 
   getImageAtCell(col: number, row: number) {
-    const file = col;
-    const rank = 7 - row;
+    const file = this.reversed ? 7 - col : col;
+    const rank = this.reversed ? row : 7 - row;
 
     const cellAlgebraic = (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;
     const piece = this.logicalBoard.get(cellAlgebraic);
@@ -58,7 +59,7 @@ export class Loloof64ChessboardStencil {
           <div></div>
           {[0, 1, 2, 3, 4, 5, 6, 7].map(colIndex => {
             const key = 'top_coord_' + colIndex;
-            const letter = String.fromCharCode('A'.charCodeAt(0) + colIndex);
+            const letter = String.fromCharCode('A'.charCodeAt(0) + (this.reversed ? 7- colIndex : colIndex));
             return (
               <p class="coordinate" key={key}>
                 {letter}
@@ -68,7 +69,7 @@ export class Loloof64ChessboardStencil {
           <div></div>
 
           {[0, 1, 2, 3, 4, 5, 6, 7].map(rowIndex => {
-            const digit = String.fromCharCode('8'.charCodeAt(0) - rowIndex);
+            const digit = String.fromCharCode('1'.charCodeAt(0) + (this.reversed ? rowIndex : 7 - rowIndex));
             return (
               <Fragment>
                 <p class="coordinate" key={'left_coord_' + rowIndex}>
@@ -96,7 +97,7 @@ export class Loloof64ChessboardStencil {
           <div></div>
           {[0, 1, 2, 3, 4, 5, 6, 7].map(colIndex => {
             const key = 'bottom_coord_' + colIndex;
-            const letter = String.fromCharCode('A'.charCodeAt(0) + colIndex);
+            const letter = String.fromCharCode('A'.charCodeAt(0) + (this.reversed ? 7- colIndex : colIndex));
             return (
               <p class="coordinate" key={key}>
                 {letter}
