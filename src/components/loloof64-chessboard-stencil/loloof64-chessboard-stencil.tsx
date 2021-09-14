@@ -272,6 +272,19 @@ export class Loloof64ChessboardStencil {
     this.cancelDragAndDrop();
   }
 
+  cancelPendindPrmotion() {
+    if (!this.promotionRequest.startFile) return;
+    
+    this.promotionRequest = {
+      startFile: undefined,
+      startRank: undefined,
+      endFile: undefined,
+      endRank: undefined,
+    };
+
+    this.cancelDragAndDrop();
+  }
+
   @Watch('reversed')
   updatePendingPromotionPieceIfNecessary() {
     if (this.draggedPieceElement) {
@@ -393,7 +406,7 @@ export class Loloof64ChessboardStencil {
         </div>
 
         {this.promotionRequest.startFile && (
-          <div id="promotion_dialog_backdrop">
+          <div id="promotion_dialog_backdrop" onClick={() => this.cancelPendindPrmotion()}>
             <div id="promotion_dialog_content">
               <img class="promotion_button" onClick={() => this.commitPromotion('q')} src={promotionQueen}></img>
               <img class="promotion_button" onClick={() => this.commitPromotion('r')} src={promotionRook}></img>
