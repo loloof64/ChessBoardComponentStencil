@@ -45,6 +45,11 @@
 
       board1.setAttribute('reversed', reversed);
       board2.setAttribute('reversed', !reversed);
+
+      board1.addEventListener('checkmate', (whiteCheckmated) => {
+        console.log(whiteCheckmated.detail)
+        alert((whiteCheckmated.detail ? 'Black' : 'White') + ' has won by checkmate.')
+      })
     </script>
   </body>
 </html>

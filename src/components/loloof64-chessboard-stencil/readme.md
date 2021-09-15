@@ -25,9 +25,20 @@ A chess board web component.
 
 ## Properties
 
-| Property   | Attribute  | Description                                     | Type      | Default |
-| ---------- | ---------- | ----------------------------------------------- | --------- | ------- |
-| `reversed` | `reversed` | True if and only if the black side is at bottom | `boolean` | `false` |
+| Property   | Attribute  | Description                                      | Type      | Default |
+| ---------- | ---------- | ------------------------------------------------ | --------- | ------- |
+| `reversed` | `reversed` | True if and only if the black side is at bottom. | `boolean` | `false` |
+
+
+## Events
+
+| Event                  | Description                                                                                                    | Type                   |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `checkmate`            | Game ended by checkmate. Detail property (eventValue.detail) is true if and only if white has been checkmated. | `CustomEvent<boolean>` |
+| `fiftyMovesRule`       | Game ended by 50 moves rule.                                                                                   | `CustomEvent<void>`    |
+| `insufficientMaterial` | Game ended by insufficient material.                                                                           | `CustomEvent<void>`    |
+| `stalemate`            | Game ended by stalemate.                                                                                       | `CustomEvent<void>`    |
+| `threeFoldRepetition`  | Game ended by threeFoldRepetition.                                                                             | `CustomEvent<void>`    |
 
 
 ----------------------------------------------

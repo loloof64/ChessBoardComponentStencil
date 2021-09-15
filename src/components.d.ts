@@ -8,7 +8,7 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface Loloof64ChessboardStencil {
         /**
-          * True if and only if the black side is at bottom
+          * True if and only if the black side is at bottom.
          */
         "reversed": boolean;
     }
@@ -27,7 +27,27 @@ declare global {
 declare namespace LocalJSX {
     interface Loloof64ChessboardStencil {
         /**
-          * True if and only if the black side is at bottom
+          * Game ended by checkmate. Detail property (eventValue.detail) is true if and only if white has been checkmated.
+         */
+        "onCheckmate"?: (event: CustomEvent<boolean>) => void;
+        /**
+          * Game ended by 50 moves rule.
+         */
+        "onFiftyMovesRule"?: (event: CustomEvent<void>) => void;
+        /**
+          * Game ended by insufficient material.
+         */
+        "onInsufficientMaterial"?: (event: CustomEvent<void>) => void;
+        /**
+          * Game ended by stalemate.
+         */
+        "onStalemate"?: (event: CustomEvent<void>) => void;
+        /**
+          * Game ended by threeFoldRepetition.
+         */
+        "onThreeFoldRepetition"?: (event: CustomEvent<void>) => void;
+        /**
+          * True if and only if the black side is at bottom.
          */
         "reversed"?: boolean;
     }

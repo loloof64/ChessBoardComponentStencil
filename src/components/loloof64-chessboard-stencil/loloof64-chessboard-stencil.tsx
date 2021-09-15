@@ -1,4 +1,4 @@
-import { Component, h, Fragment, State, getAssetPath, Prop, Listen, Watch } from '@stencil/core';
+import { Component, h, Fragment, State, getAssetPath, Prop, Listen, Watch, Event, EventEmitter } from '@stencil/core';
 import { Chess, ChessInstance, Piece, ShortMove, Square } from 'chess.js';
 
 interface DndPiece {
@@ -28,9 +28,34 @@ interface PromotionRequest {
 })
 export class Loloof64ChessboardStencil {
   /** 
-  True if and only if the black side is at bottom 
+  * True if and only if the black side is at bottom.
   */
   @Prop() reversed: boolean = false;
+
+  /**
+   Game ended by checkmate. Detail property (eventValue.detail) is true if and only if white has been checkmated.
+   */
+  @Event() checkmate: EventEmitter<boolean>;
+
+  /**
+   * Game ended by stalemate.
+   */
+  @Event() stalemate: EventEmitter<void>;
+
+  /**
+   * Game ended by threeFoldRepetition.
+   */
+  @Event() threeFoldRepetition: EventEmitter<void>;
+
+  /**
+   * Game ended by insufficient material.
+   */
+  @Event() insufficientMaterial: EventEmitter<void>;
+
+  /**
+   * Game ended by 50 moves rule.
+   */
+  @Event() fiftyMovesRule: EventEmitter<void>;
 
   dragLayerElement!: HTMLDivElement;
   draggedPieceElement!: HTMLImageElement;
@@ -38,6 +63,7 @@ export class Loloof64ChessboardStencil {
   @State() logicalBoard: ChessInstance = new Chess();
   @State() dndPieceData: DndPiece = {};
   @State() promotionRequest: PromotionRequest = {};
+  @State() gameFinished = false;
 
   getSquareFromCoordinates(file: number, rank: number): Square {
     return (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;
@@ -127,6 +153,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mousedown', { passive: false })
   handleMouseDown(evt: MouseEvent) {
     evt.preventDefault();
+    if (this.gameFinished) return;
     if (this.promotionRequest.startFile) return;
 
     const componentSize = this.dragLayerElement.getBoundingClientRect().width;
@@ -152,6 +179,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mousemove', { passive: false })
   handleMouseMove(evt: MouseEvent) {
     evt.preventDefault();
+    if (this.gameFinished) return;
     if (!this.dndPieceData.piece) return;
     if (this.promotionRequest.startFile) return;
 
@@ -170,6 +198,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mouseup', { passive: false })
   handleMouseUp(evt: MouseEvent) {
     evt.preventDefault();
+    if (this.gameFinished) return;
     if (this.promotionRequest.startFile) return;
     if (!this.dndPieceData.piece) return;
 
@@ -220,6 +249,10 @@ export class Loloof64ChessboardStencil {
     this.logicalBoard.move({ from: originSquare, to: targetSquare });
 
     this.cancelDragAndDrop();
+
+    setTimeout(() => {
+      this.notifyGameFinishedIfNecessary();
+    }, 50);
   }
 
   @Listen('mouseleave', { passive: false })
@@ -270,11 +303,15 @@ export class Loloof64ChessboardStencil {
     };
 
     this.cancelDragAndDrop();
+
+    setTimeout(() => {
+      this.notifyGameFinishedIfNecessary();
+    }, 50);
   }
 
   cancelPendindPrmotion() {
     if (!this.promotionRequest.startFile) return;
-    
+
     this.promotionRequest = {
       startFile: undefined,
       startRank: undefined,
@@ -283,6 +320,35 @@ export class Loloof64ChessboardStencil {
     };
 
     this.cancelDragAndDrop();
+  }
+
+  notifyGameFinishedIfNecessary() {
+    if (this.logicalBoard.in_checkmate()) {
+      this.gameFinished = true;
+      const whiteHasBeenCheckmated = this.logicalBoard.turn() === 'w';
+      this.checkmate.emit(whiteHasBeenCheckmated);
+      return;
+    }
+    if (this.logicalBoard.in_stalemate()) {
+      this.gameFinished = true;
+      this.stalemate.emit();
+      return;
+    }
+    if (this.logicalBoard.in_threefold_repetition()) {
+      this.gameFinished = true;
+      this.threeFoldRepetition.emit();
+      return;
+    }
+    if (this.logicalBoard.insufficient_material()) {
+      this.gameFinished = true;
+      this.insufficientMaterial.emit();
+      return;
+    }
+    if (this.logicalBoard.in_draw()) {
+      this.gameFinished = true;
+      this.fiftyMovesRule.emit();
+      return;
+    }
   }
 
   @Watch('reversed')
