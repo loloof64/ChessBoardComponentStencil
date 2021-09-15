@@ -44,6 +44,9 @@
       const positionButton = document.querySelector('#positionButton');
       let reversed = false;
 
+      board2.setAttribute('white-player-human', false);
+      board2.setAttribute('black-player-human', false);
+
       reverseButton.addEventListener('click', () => {
         reversed = !reversed;
         board1.setAttribute('reversed', reversed);

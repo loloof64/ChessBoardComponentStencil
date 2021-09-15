@@ -46,6 +46,18 @@ export class Loloof64ChessboardStencil {
   @Prop() reversed: boolean = false;
 
   /**
+   * True if white can play move on the board, or false if white
+   * must set moves manually (by calling playMove() method).
+   */
+  @Prop() whitePlayerHuman: boolean = true;
+
+   /**
+   * True if black can play move on the board, or false if black
+   * must set moves manually (by calling playMove() method).
+   */
+  @Prop() blackPlayerHuman: boolean = true;
+
+  /**
    Game ended by checkmate. The payload detail (eventValue.detail) is true if and only if white has been checkmated.
    */
   @Event() checkmate: EventEmitter<boolean>;
@@ -203,7 +215,11 @@ export class Loloof64ChessboardStencil {
   handleMouseDown(evt: MouseEvent) {
     evt.preventDefault();
     if (this.gameFinished) return;
-    if (this.promotionRequest.startFile) return;
+    if (this.promotionRequest.startFile) return
+    
+    const whiteTurn = this.logicalBoard.turn() === 'w';
+    const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
+    if (!humanTurn) return;
 
     const componentSize = this.dragLayerElement.getBoundingClientRect().width;
     const cellsSize = componentSize * 0.1;
@@ -232,6 +248,10 @@ export class Loloof64ChessboardStencil {
     if (!this.dndPieceData.piece) return;
     if (this.promotionRequest.startFile) return;
 
+    const whiteTurn = this.logicalBoard.turn() === 'w';
+    const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
+    if (!humanTurn) return;
+
     const [x, y] = this.getLocalCoordinates(evt);
     const [file, rank] = this.getCell(x, y);
 
@@ -250,6 +270,10 @@ export class Loloof64ChessboardStencil {
     if (this.gameFinished) return;
     if (this.promotionRequest.startFile) return;
     if (!this.dndPieceData.piece) return;
+
+    const whiteTurn = this.logicalBoard.turn() === 'w';
+    const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
+    if (!humanTurn) return;
 
     const componentSize = this.dragLayerElement.getBoundingClientRect().width;
     const cellsSize = componentSize * 0.1;
@@ -310,7 +334,13 @@ export class Loloof64ChessboardStencil {
   @Listen('mouseleave', { passive: false })
   handleMouseLeave(evt: MouseEvent) {
     evt.preventDefault();
+    if (this.gameFinished) return;
     if (this.promotionRequest.startFile) return;
+    if (!this.dndPieceData.piece) return;
+
+    const whiteTurn = this.logicalBoard.turn() === 'w';
+    const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
+    if (!humanTurn) return;
     this.cancelDragAndDrop();
   }
 

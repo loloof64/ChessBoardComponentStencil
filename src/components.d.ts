@@ -9,6 +9,10 @@ import { Move } from "./components/loloof64-chessboard-stencil/loloof64-chessboa
 export namespace Components {
     interface Loloof64ChessboardStencil {
         /**
+          * True if black can play move on the board, or false if black must set moves manually (by calling playMove() method).
+         */
+        "blackPlayerHuman": boolean;
+        /**
           * True if and only if the black side is at bottom.
          */
         "reversed": boolean;
@@ -16,6 +20,10 @@ export namespace Components {
           * Starts a new game. * startPositionFen: the requested position. If passed an empty string, will load default position. If passed illegal position, will throw an exception  (with an english message as a string).
          */
         "startNewGame": (startPositionFen: string) => Promise<void>;
+        /**
+          * True if white can play move on the board, or false if white must set moves manually (by calling playMove() method).
+         */
+        "whitePlayerHuman": boolean;
     }
 }
 declare global {
@@ -31,6 +39,10 @@ declare global {
 }
 declare namespace LocalJSX {
     interface Loloof64ChessboardStencil {
+        /**
+          * True if black can play move on the board, or false if black must set moves manually (by calling playMove() method).
+         */
+        "blackPlayerHuman"?: boolean;
         /**
           * Game ended by checkmate. The payload detail (eventValue.detail) is true if and only if white has been checkmated.
          */
@@ -59,6 +71,10 @@ declare namespace LocalJSX {
           * True if and only if the black side is at bottom.
          */
         "reversed"?: boolean;
+        /**
+          * True if white can play move on the board, or false if white must set moves manually (by calling playMove() method).
+         */
+        "whitePlayerHuman"?: boolean;
     }
     interface IntrinsicElements {
         "loloof64-chessboard-stencil": Loloof64ChessboardStencil;
