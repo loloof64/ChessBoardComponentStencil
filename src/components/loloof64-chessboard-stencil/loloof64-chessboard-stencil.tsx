@@ -20,6 +20,17 @@ interface PromotionRequest {
   draggedPieceY?: number;
 }
 
+export interface Move {
+  moveNumber: number;
+  whiteTurn: boolean;
+  moveFan: string;
+  moveSan: string;
+  fromFileIndex: number;
+  fromRankIndex: number;
+  toFileIndex: number;
+  toRankIndex: number;
+}
+
 @Component({
   tag: 'loloof64-chessboard-stencil',
   styleUrl: 'loloof64-chessboard-stencil.css',
@@ -27,13 +38,13 @@ interface PromotionRequest {
   assetsDirs: ['assets/chess_vectors'],
 })
 export class Loloof64ChessboardStencil {
-  /** 
-  * True if and only if the black side is at bottom.
-  */
+  /**
+   * True if and only if the black side is at bottom.
+   */
   @Prop() reversed: boolean = false;
 
   /**
-   Game ended by checkmate. Detail property (eventValue.detail) is true if and only if white has been checkmated.
+   Game ended by checkmate. The payload detail (eventValue.detail) is true if and only if white has been checkmated.
    */
   @Event() checkmate: EventEmitter<boolean>;
 
@@ -56,6 +67,12 @@ export class Loloof64ChessboardStencil {
    * Game ended by 50 moves rule.
    */
   @Event() fiftyMovesRule: EventEmitter<void>;
+
+  /**
+   * Move done on the board: either by human, or done manually.
+   * The payload detail has the following values : moveNumber (number), whiteTurn (boolean), moveFan (string), moveSan (string), fromFileIndex (number), fromRankIndex (number), toFileIndex (number), toRankIndex (number).
+   */
+  @Event() moveDone: EventEmitter<Move>;
 
   dragLayerElement!: HTMLDivElement;
   draggedPieceElement!: HTMLImageElement;
@@ -246,7 +263,10 @@ export class Loloof64ChessboardStencil {
       return;
     }
 
-    this.logicalBoard.move({ from: originSquare, to: targetSquare });
+    const moveNumberBeforeMove = parseInt(this.logicalBoard.fen().split(' ')[5]);
+    const moveData = this.logicalBoard.move({ from: originSquare, to: targetSquare });
+
+    this.emitMoveDone(moveData.san, moveNumberBeforeMove);
 
     this.cancelDragAndDrop();
 
@@ -293,7 +313,10 @@ export class Loloof64ChessboardStencil {
     const originSquare = this.getSquareFromCoordinates(this.promotionRequest.startFile, this.promotionRequest.startRank);
     const targetSquare = this.getSquareFromCoordinates(this.promotionRequest.endFile, this.promotionRequest.endRank);
 
-    this.logicalBoard.move({ from: originSquare, to: targetSquare, promotion: pieceType as ShortMove['promotion'] });
+    const moveNumberBeforeMove = parseInt(this.logicalBoard.fen().split(' ')[5]);
+    const moveData = this.logicalBoard.move({ from: originSquare, to: targetSquare, promotion: pieceType as ShortMove['promotion'] });
+
+    this.emitMoveDone(moveData.san, moveNumberBeforeMove);
 
     this.promotionRequest = {
       startFile: undefined,
@@ -349,6 +372,34 @@ export class Loloof64ChessboardStencil {
       this.fiftyMovesRule.emit();
       return;
     }
+  }
+
+  /*
+  Must be called before reseting Drag and drop data - as it relies on it. - and after the move has been done.
+  */
+  emitMoveDone(moveSan: string, moveNumberBeforeMove: number) {
+    const whiteTurn = this.logicalBoard.turn() === 'b';
+    const moveFan = this.convertMoveSanToFan(moveSan, whiteTurn);
+
+    this.moveDone.emit({
+      moveNumber: moveNumberBeforeMove,
+      moveSan,
+      moveFan,
+      whiteTurn,
+      fromFileIndex: this.dndPieceData.startFile,
+      fromRankIndex: this.dndPieceData.startRank,
+      toFileIndex: this.dndPieceData.endFile,
+      toRankIndex: this.dndPieceData.endRank,
+    });
+  }
+
+  convertMoveSanToFan(moveSan: string, whiteTurn: boolean): string {
+    moveSan = moveSan.replace(/K/g, whiteTurn ? '\u2654' : '\u265A').normalize('NFKC');
+    moveSan = moveSan.replace(/Q/g, whiteTurn ? '\u2655' : '\u265B').normalize('NFKC');
+    moveSan = moveSan.replace(/R/g, whiteTurn ? '\u2656' : '\u265C').normalize('NFKC');
+    moveSan = moveSan.replace(/B/g, whiteTurn ? '\u2657' : '\u265D').normalize('NFKC');
+    moveSan = moveSan.replace(/N/g, whiteTurn ? '\u2658' : '\u265E').normalize('NFKC');
+    return moveSan;
   }
 
   @Watch('reversed')

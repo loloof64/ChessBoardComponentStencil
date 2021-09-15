@@ -50,6 +50,8 @@
         console.log(whiteCheckmated.detail)
         alert((whiteCheckmated.detail ? 'Black' : 'White') + ' has won by checkmate.')
       })
+
+      board1.addEventListener('moveDone', ({detail}) => console.log(detail));
     </script>
   </body>
 </html>

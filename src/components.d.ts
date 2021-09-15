@@ -5,6 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { Move } from "./components/loloof64-chessboard-stencil/loloof64-chessboard-stencil";
 export namespace Components {
     interface Loloof64ChessboardStencil {
         /**
@@ -27,7 +28,7 @@ declare global {
 declare namespace LocalJSX {
     interface Loloof64ChessboardStencil {
         /**
-          * Game ended by checkmate. Detail property (eventValue.detail) is true if and only if white has been checkmated.
+          * Game ended by checkmate. The payload detail (eventValue.detail) is true if and only if white has been checkmated.
          */
         "onCheckmate"?: (event: CustomEvent<boolean>) => void;
         /**
@@ -38,6 +39,10 @@ declare namespace LocalJSX {
           * Game ended by insufficient material.
          */
         "onInsufficientMaterial"?: (event: CustomEvent<void>) => void;
+        /**
+          * Move done on the board: either by human, or done manually. The payload detail has the following values : moveNumber (number), whiteTurn (boolean), moveFan (string), moveSan (string), fromFileIndex (number), fromRankIndex (number), toFileIndex (number), toRankIndex (number).
+         */
+        "onMoveDone"?: (event: CustomEvent<Move>) => void;
         /**
           * Game ended by stalemate.
          */
