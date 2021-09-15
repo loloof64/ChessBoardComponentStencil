@@ -32,14 +32,30 @@ A chess board web component.
 
 ## Events
 
-| Event                  | Description                                                                                                                                                                                                                                                                 | Type                   |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| `checkmate`            | Game ended by checkmate. The payload detail (eventValue.detail) is true if and only if white has been checkmated.                                                                                                                                                           | `CustomEvent<boolean>` |
-| `fiftyMovesRule`       | Game ended by 50 moves rule.                                                                                                                                                                                                                                                | `CustomEvent<void>`    |
-| `insufficientMaterial` | Game ended by insufficient material.                                                                                                                                                                                                                                        | `CustomEvent<void>`    |
-| `moveDone`             | Move done on the board: either by human, or done manually. The payload has the following values : moveNumber (number), whiteTurn (boolean), moveFan (string), moveSan (string), fromFileIndex (number), fromRankIndex (number), toFileIndex (number), toRankIndex (number). | `CustomEvent<Move>`    |
-| `stalemate`            | Game ended by stalemate.                                                                                                                                                                                                                                                    | `CustomEvent<void>`    |
-| `threeFoldRepetition`  | Game ended by threeFoldRepetition.                                                                                                                                                                                                                                          | `CustomEvent<void>`    |
+| Event                  | Description                                                                                                                                                                                                                                                                        | Type                   |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `checkmate`            | Game ended by checkmate. The payload detail (eventValue.detail) is true if and only if white has been checkmated.                                                                                                                                                                  | `CustomEvent<boolean>` |
+| `fiftyMovesRule`       | Game ended by 50 moves rule.                                                                                                                                                                                                                                                       | `CustomEvent<void>`    |
+| `insufficientMaterial` | Game ended by insufficient material.                                                                                                                                                                                                                                               | `CustomEvent<void>`    |
+| `moveDone`             | Move done on the board: either by human, or done manually. The payload detail has the following values : moveNumber (number), whiteTurn (boolean), moveFan (string), moveSan (string), fromFileIndex (number), fromRankIndex (number), toFileIndex (number), toRankIndex (number). | `CustomEvent<Move>`    |
+| `stalemate`            | Game ended by stalemate.                                                                                                                                                                                                                                                           | `CustomEvent<void>`    |
+| `threeFoldRepetition`  | Game ended by threeFoldRepetition.                                                                                                                                                                                                                                                 | `CustomEvent<void>`    |
+
+
+## Methods
+
+### `startNewGame(startPositionFen: string) => Promise<void>`
+
+Starts a new game.
+* startPositionFen: the requested position. If passed an empty string, will load
+default position. If passed illegal position, will throw an exception 
+(with an english message as a string).
+
+#### Returns
+
+Type: `Promise<void>`
+
+
 
 
 ----------------------------------------------

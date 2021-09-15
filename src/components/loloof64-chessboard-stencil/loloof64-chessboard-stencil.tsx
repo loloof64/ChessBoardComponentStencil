@@ -1,5 +1,7 @@
-import { Component, h, Fragment, State, getAssetPath, Prop, Listen, Watch, Event, EventEmitter } from '@stencil/core';
+import { Component, h, Fragment, State, getAssetPath, Prop, Listen, Watch, Event, EventEmitter, Method } from '@stencil/core';
 import { Chess, ChessInstance, Piece, ShortMove, Square } from 'chess.js';
+
+const EMPTY_POSITION = '8/8/8/8/8/8/8/8 w - - 0 1';
 
 interface DndPiece {
   startFile?: number;
@@ -77,10 +79,40 @@ export class Loloof64ChessboardStencil {
   dragLayerElement!: HTMLDivElement;
   draggedPieceElement!: HTMLImageElement;
 
-  @State() logicalBoard: ChessInstance = new Chess();
+  @State() logicalBoard: ChessInstance = new Chess(EMPTY_POSITION);
   @State() dndPieceData: DndPiece = {};
   @State() promotionRequest: PromotionRequest = {};
   @State() gameFinished = false;
+
+  /**
+   * Starts a new game.
+   * * startPositionFen: the requested position. If passed an empty string, will load
+   * default position. If passed illegal position, will throw an exception 
+   * (with an english message as a string).
+   */
+  @Method()
+  async startNewGame(startPositionFen: string) {
+    if (startPositionFen.length > 0) {
+      this.logicalBoard = new Chess(startPositionFen);
+    }
+    else {
+      this.logicalBoard = new Chess();
+    }
+    
+    /*
+    Could not start game !
+    */
+   if (this.logicalBoard.fen() === EMPTY_POSITION) throw 'Illegal position !';
+    
+    this.cancelDragAndDrop();
+    this.promotionRequest = {
+      startFile: undefined,
+      startRank: undefined,
+      endFile: undefined,
+      endRank: undefined,
+    }
+    this.gameFinished = false;
+  }
 
   getSquareFromCoordinates(file: number, rank: number): Square {
     return (String.fromCharCode('a'.charCodeAt(0) + file) + String.fromCharCode('1'.charCodeAt(0) + rank)) as Square;

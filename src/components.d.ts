@@ -12,6 +12,10 @@ export namespace Components {
           * True if and only if the black side is at bottom.
          */
         "reversed": boolean;
+        /**
+          * Starts a new game. * startPositionFen: the requested position. If passed an empty string, will load default position. If passed illegal position, will throw an exception  (with an english message as a string).
+         */
+        "startNewGame": (startPositionFen: string) => Promise<void>;
     }
 }
 declare global {

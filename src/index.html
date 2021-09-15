@@ -29,12 +29,19 @@
   <body>
     <loloof64-chessboard-stencil id="board1"></loloof64-chessboard-stencil>
     <loloof64-chessboard-stencil id="board2"></loloof64-chessboard-stencil>
-    <button id="reverseButton">Reverse sides</button>
+    <div>
+      <button id="reverseButton">Reverse sides</button>
+      <label for="position">Start position (can be empty)</label>
+      <input id="position" type="text"/>
+      <button id="positionButton">New game</button>
+    </div>
 
     <script>
       const board1 = document.querySelector('#board1');
       const board2 = document.querySelector('#board2');
       const reverseButton = document.querySelector('#reverseButton');
+      const positionField = document.querySelector('#position');
+      const positionButton = document.querySelector('#positionButton');
       let reversed = false;
 
       reverseButton.addEventListener('click', () => {
@@ -52,6 +59,17 @@
       })
 
       board1.addEventListener('moveDone', ({detail}) => console.log(detail));
+
+      positionButton.addEventListener('click', async () => {
+        const positionValue = positionField.value;
+        try {
+          await board1.startNewGame(positionValue);
+          await board2.startNewGame(positionValue);
+        }
+        catch (ex) {
+          alert('Illegal position !');
+        }
+      });
     </script>
   </body>
 </html>
