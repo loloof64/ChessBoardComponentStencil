@@ -7,6 +7,7 @@
 
     <script type="module" src="/build/loloof64-chessboard-stencil.esm.js"></script>
     <script nomodule src="/build/loloof64-chessboard-stencil.js"></script>
+    <script type="text/javascript" src="chess.js"></script>
     <style>
       loloof64-chessboard-stencil:first-of-type {
         --loloof64-chessboard-stencil-size: 35vw;
@@ -32,7 +33,7 @@
     <div>
       <button id="reverseButton">Reverse sides</button>
       <label for="position">Start position (can be empty)</label>
-      <input id="position" type="text"/>
+      <input id="position" type="text" />
       <button id="positionButton">New game</button>
     </div>
 
@@ -43,6 +44,7 @@
       const positionField = document.querySelector('#position');
       const positionButton = document.querySelector('#positionButton');
       let reversed = false;
+      let chessInstance;
 
       board2.setAttribute('white-player-human', false);
       board2.setAttribute('black-player-human', false);
@@ -56,21 +58,58 @@
       board1.setAttribute('reversed', reversed);
       board2.setAttribute('reversed', !reversed);
 
-      board1.addEventListener('checkmate', (whiteCheckmated) => {
-        console.log(whiteCheckmated.detail)
-        alert((whiteCheckmated.detail ? 'Black' : 'White') + ' has won by checkmate.')
-      })
+      // board 1 listeners
 
-      board1.addEventListener('moveDone', ({detail}) => console.log(detail));
+      board1.addEventListener('checkmate', whiteCheckmated => {
+        alert((whiteCheckmated.detail ? 'Black' : 'White') + ' has won by checkmate.');
+      });
+      board1.addEventListener('stalemate', () => {
+        alert('Draw by stalemate');
+      });
+      board1.addEventListener('threeFoldRepetition', () => alert('Three fold repetition'))
+      board1.addEventListener('insufficientMaterial', () => alert('Insufficient material'))
+      board1.addEventListener('fiftyMovesRule', () => alert('50 moves rule'))
+
+      // board 2 listeners
+
+      board2.addEventListener('checkmate', whiteCheckmated => {
+        alert((whiteCheckmated.detail ? 'Black' : 'White') + ' has won by checkmate.');
+      });
+      board2.addEventListener('stalemate', () => {
+        alert('Draw by stalemate');
+      });
+      board2.addEventListener('threeFoldRepetition', () => alert('Three fold repetition'))
+      board2.addEventListener('insufficientMaterial', () => alert('Insufficient material'))
+      board2.addEventListener('fiftyMovesRule', () => alert('50 moves rule'))
+
+      // ----
+
+      board1.addEventListener('moveDone', ({ detail }) => console.log(detail));
 
       positionButton.addEventListener('click', async () => {
-        const positionValue = positionField.value;
+        let positionValue = positionField.value;
+        if (positionValue.length === 0) positionValue = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
         try {
           await board1.startNewGame(positionValue);
           await board2.startNewGame(positionValue);
-        }
-        catch (ex) {
-          alert('Illegal position !');
+          chessInstance = new Chess(positionValue);
+
+          async function game2Loop() {
+            const game2InProgress = await board2.gameInProgress();
+            if (game2InProgress) {
+              const board2Position = await board2.getCurrentPosition();
+              chessInstance = new Chess(board2Position);
+              const moves = chessInstance.moves();
+              const move = moves[Math.floor(Math.random() * moves.length)];
+              await board2.playMoveSAN(move);
+              setTimeout(game2Loop, 400);
+            }
+          }
+
+          game2Loop();
+        } catch (ex) {
+          alert(ex.stack);
         }
       });
     </script>

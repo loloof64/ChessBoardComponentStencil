@@ -9,9 +9,24 @@ import { Move } from "./components/loloof64-chessboard-stencil/loloof64-chessboa
 export namespace Components {
     interface Loloof64ChessboardStencil {
         /**
-          * True if black can play move on the board, or false if black must set moves manually (by calling playMove() method).
+          * True if black can play move on the board, or false if black must set moves manually (by calling playMove() or playMoveSAN() method).
          */
         "blackPlayerHuman": boolean;
+        /**
+          * Says if game is running or not.
+          * @returns (boolean) true if and only if the game is in progress.
+         */
+        "gameInProgress": () => Promise<boolean>;
+        /**
+          * Returns the current position.
+          * @returns (string) the position in Forsyth-Edwards Notation.
+         */
+        "getCurrentPosition": () => Promise<string>;
+        /**
+          * Tries to play the given move SAN on the board, only if the current player is defined as an external user.
+          * @returns (boolean) true if and only if the move has been commited.
+         */
+        "playMoveSAN": (moveSan: string) => Promise<boolean>;
         /**
           * True if and only if the black side is at bottom.
          */
@@ -21,7 +36,7 @@ export namespace Components {
          */
         "startNewGame": (startPositionFen: string) => Promise<void>;
         /**
-          * True if white can play move on the board, or false if white must set moves manually (by calling playMove() method).
+          * True if white can play move on the board, or false if white must set moves manually (by calling playMove() or playMoveSAN() method).
          */
         "whitePlayerHuman": boolean;
     }
@@ -40,7 +55,7 @@ declare global {
 declare namespace LocalJSX {
     interface Loloof64ChessboardStencil {
         /**
-          * True if black can play move on the board, or false if black must set moves manually (by calling playMove() method).
+          * True if black can play move on the board, or false if black must set moves manually (by calling playMove() or playMoveSAN() method).
          */
         "blackPlayerHuman"?: boolean;
         /**
@@ -72,7 +87,7 @@ declare namespace LocalJSX {
          */
         "reversed"?: boolean;
         /**
-          * True if white can play move on the board, or false if white must set moves manually (by calling playMove() method).
+          * True if white can play move on the board, or false if white must set moves manually (by calling playMove() or playMoveSAN() method).
          */
         "whitePlayerHuman"?: boolean;
     }

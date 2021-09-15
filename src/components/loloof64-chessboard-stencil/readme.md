@@ -2,7 +2,7 @@
 
 A chess board web component.
 
-* You can play legal moves for sides for which you define an human mode. If a side has a external mode, you must give the legal moves manually, by calling the method `playMove`
+* You can play legal moves for sides for which you define an human mode. If a side has a external mode, you must give the legal moves manually, by calling the method `playMove` or `playMoveSAN`.
 * A dialog is shown to you for choosing the promotion piece (clicking outside buttons dismiss it)
 * Events are sent when game is finished, as well as a move has been done on the board (i mean in human mode)
 * You can configure several colors: cells, coordinates, hovering cell indicator, ...
@@ -45,6 +45,36 @@ A chess board web component.
 
 
 ## Methods
+
+### `gameInProgress() => Promise<boolean>`
+
+Says if game is running or not.
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+
+
+### `getCurrentPosition() => Promise<string>`
+
+Returns the current position.
+
+#### Returns
+
+Type: `Promise<string>`
+
+
+
+### `playMoveSAN(moveSan: string) => Promise<boolean>`
+
+Tries to play the given move SAN on the board, only if the current player is defined as an external user.
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+
 
 ### `startNewGame(startPositionFen: string) => Promise<void>`
 

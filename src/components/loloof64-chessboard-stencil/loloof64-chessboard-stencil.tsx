@@ -47,13 +47,13 @@ export class Loloof64ChessboardStencil {
 
   /**
    * True if white can play move on the board, or false if white
-   * must set moves manually (by calling playMove() method).
+   * must set moves manually (by calling playMove() or playMoveSAN() method).
    */
   @Prop() whitePlayerHuman: boolean = true;
 
    /**
    * True if black can play move on the board, or false if black
-   * must set moves manually (by calling playMove() method).
+   * must set moves manually (by calling playMove() or playMoveSAN() method).
    */
   @Prop() blackPlayerHuman: boolean = true;
 
@@ -94,7 +94,8 @@ export class Loloof64ChessboardStencil {
   @State() logicalBoard: ChessInstance = new Chess(EMPTY_POSITION);
   @State() dndPieceData: DndPiece = {};
   @State() promotionRequest: PromotionRequest = {};
-  @State() gameFinished = false;
+  @State() gameRunning = false;
+  @State() refreshKey: string;
 
   /**
    * Starts a new game.
@@ -123,7 +124,55 @@ export class Loloof64ChessboardStencil {
       endFile: undefined,
       endRank: undefined,
     }
-    this.gameFinished = false;
+    this.gameRunning = true;
+  }
+
+  /**
+   * Tries to play the given move SAN on the board, only if the current player is defined as an external user. 
+   * @returns (boolean) true if and only if the move has been commited.
+   */
+  @Method()
+  async playMoveSAN(moveSan: string) : Promise<boolean> {
+    if (!this.gameRunning) return false;
+    const whiteTurn = this.logicalBoard.turn() === 'w';
+    const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
+    if (humanTurn) return false;
+
+    const move = this.logicalBoard.move(moveSan);
+    if (move) this.generateKey();
+
+    setTimeout(() => {
+      this.notifyGameFinishedIfNecessary();
+    }, 50);
+    return !!move;
+  }
+
+  /**
+   * Says if game is running or not.
+   * @returns (boolean) true if and only if the game is in progress.
+   */
+  @Method()
+  async gameInProgress() : Promise<boolean> {
+    return this.gameRunning;
+  }
+
+  /**
+   * Returns the current position.
+   * @returns (string) the position in Forsyth-Edwards Notation.
+   */
+  @Method()
+  async getCurrentPosition(): Promise<string> {
+    return this.logicalBoard.fen();
+  }
+
+  generateKey() {
+    const set = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let result = '';
+    for (let i=0; i<30; i++) {
+      const index = Math.floor(Math.random() * set.length);
+      result += set.charAt(index);
+    }
+    this.refreshKey = result;
   }
 
   getSquareFromCoordinates(file: number, rank: number): Square {
@@ -214,7 +263,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mousedown', { passive: false })
   handleMouseDown(evt: MouseEvent) {
     evt.preventDefault();
-    if (this.gameFinished) return;
+    if (!this.gameRunning) return;
     if (this.promotionRequest.startFile) return
     
     const whiteTurn = this.logicalBoard.turn() === 'w';
@@ -244,7 +293,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mousemove', { passive: false })
   handleMouseMove(evt: MouseEvent) {
     evt.preventDefault();
-    if (this.gameFinished) return;
+    if (!this.gameRunning) return;
     if (!this.dndPieceData.piece) return;
     if (this.promotionRequest.startFile) return;
 
@@ -267,7 +316,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mouseup', { passive: false })
   handleMouseUp(evt: MouseEvent) {
     evt.preventDefault();
-    if (this.gameFinished) return;
+    if (!this.gameRunning) return;
     if (this.promotionRequest.startFile) return;
     if (!this.dndPieceData.piece) return;
 
@@ -334,7 +383,7 @@ export class Loloof64ChessboardStencil {
   @Listen('mouseleave', { passive: false })
   handleMouseLeave(evt: MouseEvent) {
     evt.preventDefault();
-    if (this.gameFinished) return;
+    if (!this.gameRunning) return;
     if (this.promotionRequest.startFile) return;
     if (!this.dndPieceData.piece) return;
 
@@ -409,28 +458,28 @@ export class Loloof64ChessboardStencil {
 
   notifyGameFinishedIfNecessary() {
     if (this.logicalBoard.in_checkmate()) {
-      this.gameFinished = true;
+      this.gameRunning = false;
       const whiteHasBeenCheckmated = this.logicalBoard.turn() === 'w';
       this.checkmate.emit(whiteHasBeenCheckmated);
       return;
     }
     if (this.logicalBoard.in_stalemate()) {
-      this.gameFinished = true;
+      this.gameRunning = false;
       this.stalemate.emit();
       return;
     }
     if (this.logicalBoard.in_threefold_repetition()) {
-      this.gameFinished = true;
+      this.gameRunning = false;
       this.threeFoldRepetition.emit();
       return;
     }
     if (this.logicalBoard.insufficient_material()) {
-      this.gameFinished = true;
+      this.gameRunning = false;
       this.insufficientMaterial.emit();
       return;
     }
     if (this.logicalBoard.in_draw()) {
-      this.gameFinished = true;
+      this.gameRunning = false;
       this.fiftyMovesRule.emit();
       return;
     }
@@ -523,7 +572,7 @@ export class Loloof64ChessboardStencil {
 
     return (
       <Fragment>
-        <div id="lower_layer">
+        <div id="lower_layer" key={this.refreshKey}>
           <div></div>
           {[0, 1, 2, 3, 4, 5, 6, 7].map(colIndex => {
             const key = 'top_coord_' + colIndex;
