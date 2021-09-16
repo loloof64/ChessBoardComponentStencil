@@ -206,8 +206,9 @@ export class Loloof64ChessboardStencil {
 
   generateKey() {
     const set = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const KEY_SIZE = 30;
     let result = '';
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < KEY_SIZE; i++) {
       const index = Math.floor(Math.random() * set.length);
       result += set.charAt(index);
     }
