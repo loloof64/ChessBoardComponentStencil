@@ -22,6 +22,10 @@ export namespace Components {
          */
         "getCurrentPosition": () => Promise<string>;
         /**
+          * True if and only if last move arrow must be visible (if available).
+         */
+        "lastMoveVisible": boolean;
+        /**
           * Tries to play the given move on the board, only if the current player is defined as an external user. Returns (boolean) true if and only if the move has been commited.
          */
         "playMove": (move: MoveAsParameter) => Promise<boolean>;
@@ -60,6 +64,10 @@ declare namespace LocalJSX {
           * True if black can play move on the board, or false if black must set moves manually (by calling playMove() or playMoveSAN() method).
          */
         "blackPlayerHuman"?: boolean;
+        /**
+          * True if and only if last move arrow must be visible (if available).
+         */
+        "lastMoveVisible"?: boolean;
         /**
           * Game ended by checkmate. The payload detail (eventValue.detail) is true if and only if white has been checkmated.
          */

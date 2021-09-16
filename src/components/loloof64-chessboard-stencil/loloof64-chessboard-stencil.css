@@ -114,3 +114,14 @@
   width: calc(var(--loloof64-chessboard-stencil-size, 100px) * 0.1);
   height: calc(var(--loloof64-chessboard-stencil-size, 100px) * 0.1);
 }
+
+#last_move_layer {
+  position: absolute;
+  width: var(--loloof64-chessboard-stencil-size, 100px);
+  height: var(--loloof64-chessboard-stencil-size, 100px);
+}
+
+.last_move_line {
+  position: absolute;
+  background-color: var(--loloof64-chessboard-stencil-last-move-arrow-color, cadetBlue);
+}
