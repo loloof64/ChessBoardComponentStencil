@@ -5,7 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { Move } from "./components/loloof64-chessboard-stencil/loloof64-chessboard-stencil";
+import { MoveAsParameter, MoveDone } from "./components/loloof64-chessboard-stencil/loloof64-chessboard-stencil";
+import { Move, ShortMove } from "chess.js";
 export namespace Components {
     interface Loloof64ChessboardStencil {
         /**
@@ -13,18 +14,19 @@ export namespace Components {
          */
         "blackPlayerHuman": boolean;
         /**
-          * Says if game is running or not.
-          * @returns (boolean) true if and only if the game is in progress.
+          * Says if game is running or not. Returns (boolean) true if and only if the game is in progress.
          */
         "gameInProgress": () => Promise<boolean>;
         /**
-          * Returns the current position.
-          * @returns (string) the position in Forsyth-Edwards Notation.
+          * Returns the current position. Returns (string) the position in Forsyth-Edwards Notation.
          */
         "getCurrentPosition": () => Promise<string>;
         /**
-          * Tries to play the given move SAN on the board, only if the current player is defined as an external user.
-          * @returns (boolean) true if and only if the move has been commited.
+          * Tries to play the given move on the board, only if the current player is defined as an external user. Returns (boolean) true if and only if the move has been commited.
+         */
+        "playMove": (move: MoveAsParameter) => Promise<boolean>;
+        /**
+          * Tries to play the given move SAN on the board, only if the current player is defined as an external user. Returns (boolean) true if and only if the move has been commited.
          */
         "playMoveSAN": (moveSan: string) => Promise<boolean>;
         /**
@@ -32,7 +34,7 @@ export namespace Components {
          */
         "reversed": boolean;
         /**
-          * Starts a new game. * startPositionFen: the requested position. If passed an empty string, will load default position. If passed illegal position, will throw an exception  (with an english message as a string).
+          * Starts a new game. * startPositionFen: the requested position. If passed an empty string, will load default position. If passed illegal position, will throw an exception (with an english message as a string).
          */
         "startNewGame": (startPositionFen: string) => Promise<void>;
         /**
@@ -73,7 +75,7 @@ declare namespace LocalJSX {
         /**
           * Move done on the board: either by human, or done manually. The payload detail has the following values : moveNumber (number), whiteTurn (boolean), moveFan (string), moveSan (string), fromFileIndex (number), fromRankIndex (number), toFileIndex (number), toRankIndex (number).
          */
-        "onMoveDone"?: (event: CustomEvent<Move>) => void;
+        "onMoveDone"?: (event: CustomEvent<MoveDone>) => void;
         /**
           * Game ended by stalemate.
          */

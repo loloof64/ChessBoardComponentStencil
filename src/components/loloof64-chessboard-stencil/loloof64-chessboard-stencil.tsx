@@ -1,5 +1,5 @@
 import { Component, h, Fragment, State, getAssetPath, Prop, Listen, Watch, Event, EventEmitter, Method } from '@stencil/core';
-import { Chess, ChessInstance, Piece, ShortMove, Square } from 'chess.js';
+import { Chess, ChessInstance, Piece, ShortMove, Square, Move } from 'chess.js';
 
 const EMPTY_POSITION = '8/8/8/8/8/8/8/8 w - - 0 1';
 
@@ -22,7 +22,7 @@ interface PromotionRequest {
   draggedPieceY?: number;
 }
 
-export interface Move {
+export interface MoveDone {
   moveNumber: number;
   whiteTurn: boolean;
   moveFan: string;
@@ -31,6 +31,14 @@ export interface Move {
   fromRankIndex: number;
   toFileIndex: number;
   toRankIndex: number;
+}
+
+export interface MoveAsParameter {
+  startFile: number;
+  startRank: number;
+  endFile: number;
+  endRank: number;
+  promotion?: string;
 }
 
 @Component({
@@ -51,7 +59,7 @@ export class Loloof64ChessboardStencil {
    */
   @Prop() whitePlayerHuman: boolean = true;
 
-   /**
+  /**
    * True if black can play move on the board, or false if black
    * must set moves manually (by calling playMove() or playMoveSAN() method).
    */
@@ -86,7 +94,7 @@ export class Loloof64ChessboardStencil {
    * Move done on the board: either by human, or done manually.
    * The payload detail has the following values : moveNumber (number), whiteTurn (boolean), moveFan (string), moveSan (string), fromFileIndex (number), fromRankIndex (number), toFileIndex (number), toRankIndex (number).
    */
-  @Event() moveDone: EventEmitter<Move>;
+  @Event() moveDone: EventEmitter<MoveDone>;
 
   dragLayerElement!: HTMLDivElement;
   draggedPieceElement!: HTMLImageElement;
@@ -100,65 +108,96 @@ export class Loloof64ChessboardStencil {
   /**
    * Starts a new game.
    * * startPositionFen: the requested position. If passed an empty string, will load
-   * default position. If passed illegal position, will throw an exception 
+   * default position. If passed illegal position, will throw an exception
    * (with an english message as a string).
    */
   @Method()
   async startNewGame(startPositionFen: string) {
     if (startPositionFen.length > 0) {
       this.logicalBoard = new Chess(startPositionFen);
-    }
-    else {
+    } else {
       this.logicalBoard = new Chess();
     }
-    
+
     /*
     Could not start game !
     */
-   if (this.logicalBoard.fen() === EMPTY_POSITION) throw 'Illegal position !';
-    
+    if (this.logicalBoard.fen() === EMPTY_POSITION) throw 'Illegal position !';
+
     this.cancelDragAndDrop();
     this.promotionRequest = {
       startFile: undefined,
       startRank: undefined,
       endFile: undefined,
       endRank: undefined,
-    }
+    };
     this.gameRunning = true;
   }
 
   /**
-   * Tries to play the given move SAN on the board, only if the current player is defined as an external user. 
-   * @returns (boolean) true if and only if the move has been commited.
+   * Tries to play the given move SAN on the board, only if the current player is defined as an external user.
+   * Returns (boolean) true if and only if the move has been commited.
    */
   @Method()
-  async playMoveSAN(moveSan: string) : Promise<boolean> {
+  async playMoveSAN(moveSan: string): Promise<boolean> {
     if (!this.gameRunning) return false;
     const whiteTurn = this.logicalBoard.turn() === 'w';
     const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
     if (humanTurn) return false;
 
-    const move = this.logicalBoard.move(moveSan);
-    if (move) this.generateKey();
+    const moveDone = this.logicalBoard.move(moveSan);
+    if (moveDone) this.generateKey();
 
     setTimeout(() => {
       this.notifyGameFinishedIfNecessary();
     }, 50);
-    return !!move;
+    return !!moveDone;
+  }
+
+   /**
+   * Tries to play the given move on the board, only if the current player is defined as an external user.
+   * Returns (boolean) true if and only if the move has been commited.
+   */
+  @Method()
+  async playMove(move: MoveAsParameter): Promise<boolean> {
+    if (!this.gameRunning) return false;
+    const whiteTurn = this.logicalBoard.turn() === 'w';
+    const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
+    if (humanTurn) return false;
+
+    const from = this.getSquareFromCoordinates(move.startFile, move.startRank);
+    const to = this.getSquareFromCoordinates(move.endFile, move.endRank);
+    let moveDone: Move;
+    if (move.promotion) {
+      moveDone = this.logicalBoard.move({
+        from, to, promotion: move.promotion as ShortMove['promotion']
+      });
+    }
+    else {
+      moveDone = this.logicalBoard.move({
+        from, to
+      });
+    }
+    if (moveDone) this.generateKey();
+
+    setTimeout(() => {
+      this.notifyGameFinishedIfNecessary();
+    }, 50);
+    return !!moveDone;
   }
 
   /**
    * Says if game is running or not.
-   * @returns (boolean) true if and only if the game is in progress.
+   * Returns (boolean) true if and only if the game is in progress.
    */
   @Method()
-  async gameInProgress() : Promise<boolean> {
+  async gameInProgress(): Promise<boolean> {
     return this.gameRunning;
   }
 
   /**
    * Returns the current position.
-   * @returns (string) the position in Forsyth-Edwards Notation.
+   * Returns (string) the position in Forsyth-Edwards Notation.
    */
   @Method()
   async getCurrentPosition(): Promise<string> {
@@ -166,9 +205,9 @@ export class Loloof64ChessboardStencil {
   }
 
   generateKey() {
-    const set = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const set = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
-    for (let i=0; i<30; i++) {
+    for (let i = 0; i < 30; i++) {
       const index = Math.floor(Math.random() * set.length);
       result += set.charAt(index);
     }
@@ -264,8 +303,8 @@ export class Loloof64ChessboardStencil {
   handleMouseDown(evt: MouseEvent) {
     evt.preventDefault();
     if (!this.gameRunning) return;
-    if (this.promotionRequest.startFile) return
-    
+    if (this.promotionRequest.startFile) return;
+
     const whiteTurn = this.logicalBoard.turn() === 'w';
     const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
     if (!humanTurn) return;
@@ -278,6 +317,10 @@ export class Loloof64ChessboardStencil {
 
     const piece = this.getPiece(file, rank);
     if (!piece) return;
+
+    const whitePiece = piece.color === 'w';
+    const isPlayerPiece = (whiteTurn && whitePiece) || (!whiteTurn && !whitePiece);
+    if (!isPlayerPiece) return;
 
     this.dndPieceData = {
       startFile: file,
