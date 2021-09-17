@@ -36,6 +36,8 @@
         <button id="reverseButton">Reverse sides</button>
         <input type="checkbox" id="lastMoveVisibleOption" checked/>
         <label for="lastMoveVisibleOption">Last move visible</label>
+        <input type="checkbox" id="coordinatesVisibleOption" checked />
+        <label for="coordinatesVisibleOption">Coordinates visible</label>
       </p>
       <p>
         <label for="position">Start position (can be empty)</label>
@@ -51,14 +53,21 @@
       const positionField = document.querySelector('#position');
       const positionButton = document.querySelector('#positionButton');
       const lastMoveVisibleOption = document.querySelector('#lastMoveVisibleOption');
+      const coordinatesVisibleOption = document.querySelector('#coordinatesVisibleOption');
       let reversed = false;
       let lastMoveArrowVisible = true;
+      let coordinatesVisible = true;
       let chessInstance;
 
       board1.setAttribute('last-move-visible', lastMoveArrowVisible);
-      lastMoveVisibleOption.addEventListener('click', (event) => {
+      board1.setAttribute('coordinates-visible', coordinatesVisible);
+      lastMoveVisibleOption.addEventListener('click', () => {
         lastMoveArrowVisible = ! lastMoveArrowVisible;
         board1.setAttribute('last-move-visible', lastMoveArrowVisible);
+      });
+      coordinatesVisibleOption.addEventListener('click', () => {
+        coordinatesVisible = !coordinatesVisible;
+        board1.setAttribute('coordinates-visible', coordinatesVisible);
       });
 
       board2.setAttribute('white-player-human', false);

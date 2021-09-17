@@ -78,6 +78,11 @@ export class Loloof64ChessboardStencil {
   @Prop() lastMoveVisible = true;
 
   /**
+   * True if and only if coordinates should be visible.
+   */
+  @Prop() coordinatesVisible = true;
+
+  /**
    Game ended by checkmate. The payload detail (eventValue.detail) is true if and only if white has been checkmated.
    */
   @Event() checkmate: EventEmitter<boolean>;
@@ -862,7 +867,7 @@ export class Loloof64ChessboardStencil {
             const letter = String.fromCharCode('A'.charCodeAt(0) + (this.reversed ? 7 - colIndex : colIndex));
             return (
               <p class="coordinate" key={key}>
-                {letter}
+                {this.coordinatesVisible ? letter : ''}
               </p>
             );
           })}
@@ -873,7 +878,7 @@ export class Loloof64ChessboardStencil {
             return (
               <Fragment>
                 <p class="coordinate" key={'left_coord_' + rowIndex}>
-                  {digit}
+                  {this.coordinatesVisible ? digit : ''}
                 </p>
                 {[
                   ...[0, 1, 2, 3, 4, 5, 6, 7].map(colIndex => {
@@ -891,7 +896,7 @@ export class Loloof64ChessboardStencil {
                   }),
                 ]}
                 <p class="coordinate" key={'right_coord_' + rowIndex}>
-                  {digit}
+                  {this.coordinatesVisible ? digit : ''}
                 </p>
               </Fragment>
             );
@@ -903,7 +908,7 @@ export class Loloof64ChessboardStencil {
             const letter = String.fromCharCode('A'.charCodeAt(0) + (this.reversed ? 7 - colIndex : colIndex));
             return (
               <p class="coordinate" key={key}>
-                {letter}
+                {this.coordinatesVisible ? letter : ''}
               </p>
             );
           })}

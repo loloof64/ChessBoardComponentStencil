@@ -26,12 +26,13 @@ A chess board web component.
 
 ## Properties
 
-| Property           | Attribute            | Description                                                                                                                          | Type      | Default |
-| ------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | --------- | ------- |
-| `blackPlayerHuman` | `black-player-human` | True if black can play move on the board, or false if black must set moves manually (by calling playMove() or playMoveSAN() method). | `boolean` | `true`  |
-| `lastMoveVisible`  | `last-move-visible`  | True if and only if last move arrow must be visible (if available).                                                                  | `boolean` | `true`  |
-| `reversed`         | `reversed`           | True if and only if the black side is at bottom.                                                                                     | `boolean` | `false` |
-| `whitePlayerHuman` | `white-player-human` | True if white can play move on the board, or false if white must set moves manually (by calling playMove() or playMoveSAN() method). | `boolean` | `true`  |
+| Property             | Attribute             | Description                                                                                                                          | Type      | Default |
+| -------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | --------- | ------- |
+| `blackPlayerHuman`   | `black-player-human`  | True if black can play move on the board, or false if black must set moves manually (by calling playMove() or playMoveSAN() method). | `boolean` | `true`  |
+| `coordinatesVisible` | `coordinates-visible` | True if and only if coordinates should be visible.                                                                                   | `boolean` | `true`  |
+| `lastMoveVisible`    | `last-move-visible`   | True if and only if last move arrow must be visible (if available).                                                                  | `boolean` | `true`  |
+| `reversed`           | `reversed`            | True if and only if the black side is at bottom.                                                                                     | `boolean` | `false` |
+| `whitePlayerHuman`   | `white-player-human`  | True if white can play move on the board, or false if white must set moves manually (by calling playMove() or playMoveSAN() method). | `boolean` | `true`  |
 
 
 ## Events
@@ -73,7 +74,15 @@ Type: `Promise<string>`
 ### `playMove(move: MoveAsParameter) => Promise<boolean>`
 
 Tries to play the given move on the board, only if the current player is defined as an external user.
-
+MoveAsParameter is simply an alias for the following : {
+ startFile: number;
+ startRank: number;
+ endFile: number;
+ endRank: number;
+ promotion?: string;
+}.
+startFile/startRank/endFile/endRank are in the range [0,7].
+promotion valu can be 'n', 'b', 'r' or 'q' string.
 Returns (boolean) true if and only if the move has been commited.
 
 #### Returns

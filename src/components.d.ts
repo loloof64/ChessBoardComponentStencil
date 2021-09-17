@@ -14,6 +14,10 @@ export namespace Components {
          */
         "blackPlayerHuman": boolean;
         /**
+          * True if and only if coordinates should be visible.
+         */
+        "coordinatesVisible": boolean;
+        /**
           * Says if game is running or not. Returns (boolean) true if and only if the game is in progress.
          */
         "gameInProgress": () => Promise<boolean>;
@@ -64,6 +68,10 @@ declare namespace LocalJSX {
           * True if black can play move on the board, or false if black must set moves manually (by calling playMove() or playMoveSAN() method).
          */
         "blackPlayerHuman"?: boolean;
+        /**
+          * True if and only if coordinates should be visible.
+         */
+        "coordinatesVisible"?: boolean;
         /**
           * True if and only if last move arrow must be visible (if available).
          */
