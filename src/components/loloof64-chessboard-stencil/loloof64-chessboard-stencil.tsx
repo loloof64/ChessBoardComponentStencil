@@ -737,7 +737,7 @@ export class Loloof64ChessboardStencil {
   }
 
   @Watch('reversed')
-  updatePendingPromotionPieceIfNecessary() {
+  updateBoardRegardingReversedState() {
     if (this.draggedPieceElement) {
       const componentSize = this.dragLayerElement.getBoundingClientRect().width;
       const cellsSize = componentSize * 0.1;
@@ -747,6 +747,7 @@ export class Loloof64ChessboardStencil {
       this.draggedPieceElement.style.left = left + 'px';
       this.draggedPieceElement.style.top = top + 'px';
     }
+    this.updateLastMoveArrow();
   }
 
   render() {
