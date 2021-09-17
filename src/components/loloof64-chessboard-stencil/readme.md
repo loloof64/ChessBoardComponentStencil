@@ -91,7 +91,7 @@ MoveAsParameter is simply an alias for the following : {
  endRank: number;
  promotion?: string;
 }.
-startFile/startRank/endFile/endRank are in the range [0,7].
+startFile/startRank/endFile/endRank should be in the range [0,7].
 promotion valu can be 'n', 'b', 'r' or 'q' string.
 Returns (boolean) true if and only if the move has been commited.
 
@@ -105,6 +105,30 @@ Type: `Promise<boolean>`
 
 Tries to play the given move SAN on the board, only if the current player is defined as an external user.
 Returns (boolean) true if and only if the move has been commited.
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+
+
+### `setPositionAndLastMove(data: ManualMoveSet) => Promise<boolean>`
+
+You can set up the position and last move arrow, if the game is not in progress.
+Otherwise won't have any effect. 
+Returns true if the position and last move could be set, false otherwise.
+If no parameter given or wrong arrow values or null/undefined position, then it will clear last move arrow and sets the board to the position before the first move. 
+Particularly useful for history managers.
+
+ManualMoveSet is an alias for the following :
+{
+ positionFen: string;
+ fromFileIndex: number;
+ fromRankIndex: number;
+ toFileIndex: number;
+ toRankIndex: number;
+}.
+fromFileIndex/fromRankIndex/toFileIndex/toRankIndex should be in the range [0,7].
 
 #### Returns
 

@@ -2,6 +2,7 @@ import { Component, h, Fragment, State, getAssetPath, Prop, Listen, Watch, Event
 import { Chess, ChessInstance, Piece, ShortMove, Square, Move } from 'chess.js';
 
 const EMPTY_POSITION = '8/8/8/8/8/8/8/8 w - - 0 1';
+const DEFAULT_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 interface DndPiece {
   startFile?: number;
@@ -46,6 +47,14 @@ export interface MoveAsParameter {
   endFile: number;
   endRank: number;
   promotion?: string;
+}
+
+export interface ManualMoveSet {
+  positionFen: string;
+  fromFileIndex: number;
+  fromRankIndex: number;
+  toFileIndex: number;
+  toRankIndex: number;
 }
 
 @Component({
@@ -152,6 +161,8 @@ export class Loloof64ChessboardStencil {
 
   @State() lastMove: LastMove = undefined;
 
+  @State() firstPosition: string = EMPTY_POSITION;
+
   /**
    * Starts a new game.
    * * startPositionFen: the requested position. If passed an empty string, will load
@@ -162,7 +173,9 @@ export class Loloof64ChessboardStencil {
   async startNewGame(startPositionFen: string) {
     if (startPositionFen.length > 0) {
       this.logicalBoard = new Chess(startPositionFen);
+      this.firstPosition = startPositionFen;
     } else {
+      this.firstPosition = DEFAULT_POSITION;
       this.logicalBoard = new Chess();
     }
 
@@ -221,7 +234,7 @@ export class Loloof64ChessboardStencil {
       endRank: number;
       promotion?: string;
     }.
-   * startFile/startRank/endFile/endRank are in the range [0,7].
+   * startFile/startRank/endFile/endRank should be in the range [0,7].
    * promotion valu can be 'n', 'b', 'r' or 'q' string.
    * Returns (boolean) true if and only if the move has been commited.
    */
@@ -293,6 +306,51 @@ export class Loloof64ChessboardStencil {
   @Method()
   async stop() {
     this.gameRunning = false;
+  }
+
+  /**
+   * You can set up the position and last move arrow, if the game is not in progress.
+   * Otherwise won't have any effect. 
+   * Returns true if the position and last move could be set, false otherwise.
+   * If no parameter given or wrong arrow values or null/undefined position, then it will clear last move arrow and sets the board to the position before the first move. 
+   * Particularly useful for history managers.
+   * 
+   * ManualMoveSet is an alias for the following :
+   * {
+      positionFen: string;
+      fromFileIndex: number;
+      fromRankIndex: number;
+      toFileIndex: number;
+      toRankIndex: number;
+    }.
+    fromFileIndex/fromRankIndex/toFileIndex/toRankIndex should be in the range [0,7].
+   */
+  @Method()
+  async setPositionAndLastMove(data: ManualMoveSet): Promise<boolean> {
+    if (this.gameRunning) return false;
+    const validArrowValues = data.fromFileIndex >= 0 && data.fromFileIndex <= 7
+      && data.fromRankIndex >= 0 && data.fromRankIndex <= 7 &&
+      data.toFileIndex >= 0 && data.toFileIndex <= 7 &&
+      data.toRankIndex >= 0 && data.toRankIndex <= 7;
+    if (validArrowValues && data.positionFen) {
+      this.lastMove = {
+        startFile: data.fromFileIndex,
+        startRank: data.fromRankIndex,
+        endFile: data.toFileIndex,
+        endRank: data.toRankIndex,
+      };
+      this.logicalBoard = new Chess(data.positionFen);
+      return true;
+    }
+
+    this.lastMove = {
+      startFile: undefined,
+      startRank: undefined,
+      endFile: undefined,
+      endRank: undefined
+    };
+    this.logicalBoard = new Chess(this.firstPosition);
+    return false;
   }
 
   algebraicCoordinatesToObject(coordsStr: string): Array<number> {

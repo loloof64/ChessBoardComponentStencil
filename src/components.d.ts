@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { MoveAsParameter, MoveDone } from "./components/loloof64-chessboard-stencil/loloof64-chessboard-stencil";
+import { ManualMoveSet, MoveAsParameter, MoveDone } from "./components/loloof64-chessboard-stencil/loloof64-chessboard-stencil";
 import { Move, ShortMove } from "chess.js";
 export namespace Components {
     interface Loloof64ChessboardStencil {
@@ -34,7 +34,7 @@ export namespace Components {
          */
         "lastMoveVisible": boolean;
         /**
-          * Tries to play the given move on the board, only if the current player is defined as an external user. MoveAsParameter is simply an alias for the following : {  startFile: number;  startRank: number;  endFile: number;  endRank: number;  promotion?: string; }. startFile/startRank/endFile/endRank are in the range [0,7]. promotion valu can be 'n', 'b', 'r' or 'q' string. Returns (boolean) true if and only if the move has been commited.
+          * Tries to play the given move on the board, only if the current player is defined as an external user. MoveAsParameter is simply an alias for the following : {  startFile: number;  startRank: number;  endFile: number;  endRank: number;  promotion?: string; }. startFile/startRank/endFile/endRank should be in the range [0,7]. promotion valu can be 'n', 'b', 'r' or 'q' string. Returns (boolean) true if and only if the move has been commited.
          */
         "playMove": (move: MoveAsParameter) => Promise<boolean>;
         /**
@@ -45,6 +45,10 @@ export namespace Components {
           * True if and only if the black side is at bottom.
          */
         "reversed": boolean;
+        /**
+          * You can set up the position and last move arrow, if the game is not in progress. Otherwise won't have any effect.  Returns true if the position and last move could be set, false otherwise. If no parameter given or wrong arrow values or null/undefined position, then it will clear last move arrow and sets the board to the position before the first move.  Particularly useful for history managers.  ManualMoveSet is an alias for the following : {  positionFen: string;  fromFileIndex: number;  fromRankIndex: number;  toFileIndex: number;  toRankIndex: number; }. fromFileIndex/fromRankIndex/toFileIndex/toRankIndex should be in the range [0,7].
+         */
+        "setPositionAndLastMove": (data: ManualMoveSet) => Promise<boolean>;
         /**
           * Starts a new game. * startPositionFen: the requested position. If passed an empty string, will load default position. If passed illegal position, will throw an exception (with an english message as a string).
          */
