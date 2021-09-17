@@ -279,6 +279,11 @@ export class Loloof64ChessboardStencil {
     return this.logicalBoard.fen();
   }
 
+  @Method()
+  async isWhiteTurn(): Promise<boolean> {
+    return this.logicalBoard.turn() === 'w';
+  }
+
   algebraicCoordinatesToObject(coordsStr: string): Array<number> {
     const asciiLowerA = 97;
     const ascii1 = 49;

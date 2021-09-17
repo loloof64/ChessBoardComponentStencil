@@ -25,6 +25,7 @@ export namespace Components {
           * Returns the current position. Returns (string) the position in Forsyth-Edwards Notation.
          */
         "getCurrentPosition": () => Promise<string>;
+        "isWhiteTurn": () => Promise<boolean>;
         /**
           * True if and only if last move arrow must be visible (if available).
          */
