@@ -22,6 +22,10 @@ export namespace Components {
          */
         "gameInProgress": () => Promise<boolean>;
         /**
+          * Returns the game pgn as a string. Only sets white and black names if they are defined. newLineChar if set, defines the new line string (it is '\n' by default). maxWidth if set, defines the maximum line width.
+         */
+        "gamePgn": (whiteName: string, blackName: string, newLineChar?: string, maxWidth?: number) => Promise<string>;
+        /**
           * Returns the current position. Returns (string) the position in Forsyth-Edwards Notation.
          */
         "getCurrentPosition": () => Promise<string>;

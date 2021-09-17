@@ -61,6 +61,18 @@ Type: `Promise<boolean>`
 
 
 
+### `gamePgn(whiteName: string, blackName: string, newLineChar?: string, maxWidth?: number) => Promise<string>`
+
+Returns the game pgn as a string. Only sets white and black names if they are defined.
+newLineChar if set, defines the new line string (it is '\n' by default).
+maxWidth if set, defines the maximum line width.
+
+#### Returns
+
+Type: `Promise<string>`
+
+
+
 ### `getCurrentPosition() => Promise<string>`
 
 Returns the current position.

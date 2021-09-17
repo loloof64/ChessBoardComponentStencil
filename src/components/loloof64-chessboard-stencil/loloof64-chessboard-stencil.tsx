@@ -361,6 +361,18 @@ export class Loloof64ChessboardStencil {
     return false;
   }
 
+  /**
+   * Returns the game pgn as a string. Only sets white and black names if they are defined.
+   * newLineChar if set, defines the new line string (it is '\n' by default).
+   * maxWidth if set, defines the maximum line width.
+   */
+  @Method()
+  gamePgn(whiteName: string, blackName: string, newLineChar: string = '\n', maxWidth?: number): Promise<string> {
+    this.logicalBoard.header('White', whiteName);
+    this.logicalBoard.header('Black', blackName);
+    return Promise.resolve(this.logicalBoard.pgn({newline_char: newLineChar, max_width: maxWidth}));
+  }
+
   emitWaitingManualMoveIfPossible() {
     const whiteTurn = this.logicalBoard.turn() === 'w';
     const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
