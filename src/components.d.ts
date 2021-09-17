@@ -113,6 +113,10 @@ declare namespace LocalJSX {
          */
         "onThreeFoldRepetition"?: (event: CustomEvent<void>) => void;
         /**
+          * The game is "stalled" as the current player to move is set to external player : so you should commit a move manually. So you can call method playMove() or playMoveSAN(). Eventually, you can check side to move with call to isWhiteTurn() and current position with getCurrentPosition(). Useful for making an engine play, for example.
+         */
+        "onWaitingManualMove"?: (event: CustomEvent<void>) => void;
+        /**
           * True if and only if the black side is at bottom.
          */
         "reversed"?: boolean;

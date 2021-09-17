@@ -122,6 +122,14 @@ export class Loloof64ChessboardStencil {
    */
   @Event() moveDone: EventEmitter<MoveDone>;
 
+  /**
+   * The game is "stalled" as the current player to move is set to external player : so you
+   * should commit a move manually. So you can call method playMove() or playMoveSAN(). Eventually,
+   * you can check side to move with call to isWhiteTurn() and current position with getCurrentPosition().
+   * Useful for making an engine play, for example.
+   */
+  @Event() waitingManualMove: EventEmitter<void>;
+
   dragLayerElement!: HTMLDivElement;
   draggedPieceElement!: HTMLImageElement;
 
@@ -351,6 +359,14 @@ export class Loloof64ChessboardStencil {
     };
     this.logicalBoard = new Chess(this.firstPosition);
     return false;
+  }
+
+  emitWaitingManualMoveIfPossible() {
+    const whiteTurn = this.logicalBoard.turn() === 'w';
+    const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
+
+    if (humanTurn) return;
+    this.waitingManualMove.emit();
   }
 
   algebraicCoordinatesToObject(coordsStr: string): Array<number> {
@@ -780,6 +796,7 @@ export class Loloof64ChessboardStencil {
       this.fiftyMovesRule.emit();
       return;
     }
+    this.emitWaitingManualMoveIfPossible();
   }
 
   /*
