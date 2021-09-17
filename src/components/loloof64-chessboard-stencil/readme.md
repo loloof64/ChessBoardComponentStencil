@@ -7,6 +7,10 @@ A chess board web component.
 * Events are sent when game is finished, as well as a move has been done on the board (i mean in human mode)
 * You can configure several colors: cells, coordinates, hovering cell indicator, ...
 
+## A little word of caution
+
+When chaining methods/events, you may experience some update issues. Indeed, often the cpu needs some time in order to update the component state. If you run into such issues, don't hesitate to use setTimeout with some milliseconds or hundreds of milliseconds
+
 ## CSS variables
 
 | Name                                                | Description                                                | Default     |
