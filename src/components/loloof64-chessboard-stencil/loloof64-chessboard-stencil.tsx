@@ -455,17 +455,9 @@ export class Loloof64ChessboardStencil {
     if (!this.gameRunning) return;
     if (this.promotionRequest.startFile) return;
 
-    /////////////////
-    console.log('1');
-    ////////////////////
-
     const whiteTurn = this.logicalBoard.turn() === 'w';
     const humanTurn = (whiteTurn && this.whitePlayerHuman) || (!whiteTurn && this.blackPlayerHuman);
     if (!humanTurn) return;
-
-    /////////////////
-    console.log('2');
-    ////////////////////
 
     const componentSize = this.dragLayerElement.getBoundingClientRect().width;
     const cellsSize = componentSize * 0.1;
@@ -479,10 +471,6 @@ export class Loloof64ChessboardStencil {
     const whitePiece = piece.color === 'w';
     const isPlayerPiece = (whiteTurn && whitePiece) || (!whiteTurn && !whitePiece);
     if (!isPlayerPiece) return;
-
-    /////////////////
-    console.log('3');
-    ////////////////////
 
     this.dndPieceData = {
       startFile: file,
