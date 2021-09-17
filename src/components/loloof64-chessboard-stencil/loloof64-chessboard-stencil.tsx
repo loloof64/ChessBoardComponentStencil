@@ -283,10 +283,10 @@ export class Loloof64ChessboardStencil {
       const startLine = ['true', true].includes(this.reversed) ? this.lastMove.startRank : 7 - this.lastMove.startRank;
       const endColumn = ['true', true].includes(this.reversed) ? 7 - this.lastMove.endFile : this.lastMove.endFile;
       const endLine = ['true', true].includes(this.reversed) ? this.lastMove.endRank : 7 - this.lastMove.endRank;
-      const ax = cellsSize * (startColumn + 1.0);
-      const ay = cellsSize * (startLine + 1.0);
-      const bx = cellsSize * (endColumn + 1.0);
-      const by = cellsSize * (endLine + 1.0);
+      const ax = cellsSize * (startColumn + 1.5);
+      const ay = cellsSize * (startLine + 1.5);
+      const bx = cellsSize * (endColumn + 1.5);
+      const by = cellsSize * (endLine + 1.5);
       const realAx = ax - halfThickness;
       const realAy = ay;
       const realBx = bx - halfThickness;
