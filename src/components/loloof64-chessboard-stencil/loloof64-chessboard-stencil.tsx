@@ -279,9 +279,20 @@ export class Loloof64ChessboardStencil {
     return this.logicalBoard.fen();
   }
 
+  /**
+   * True if it is white turn, false otherwise.
+   */
   @Method()
   async isWhiteTurn(): Promise<boolean> {
     return this.logicalBoard.turn() === 'w';
+  }
+
+  /**
+   * Stops the current game (if any).
+   */
+  @Method()
+  async stop() {
+    this.gameRunning = false;
   }
 
   algebraicCoordinatesToObject(coordsStr: string): Array<number> {

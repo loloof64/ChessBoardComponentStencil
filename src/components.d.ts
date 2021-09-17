@@ -25,6 +25,9 @@ export namespace Components {
           * Returns the current position. Returns (string) the position in Forsyth-Edwards Notation.
          */
         "getCurrentPosition": () => Promise<string>;
+        /**
+          * True if it is white turn, false otherwise.
+         */
         "isWhiteTurn": () => Promise<boolean>;
         /**
           * True if and only if last move arrow must be visible (if available).
@@ -46,6 +49,10 @@ export namespace Components {
           * Starts a new game. * startPositionFen: the requested position. If passed an empty string, will load default position. If passed illegal position, will throw an exception (with an english message as a string).
          */
         "startNewGame": (startPositionFen: string) => Promise<void>;
+        /**
+          * Stops the current game (if any).
+         */
+        "stop": () => Promise<void>;
         /**
           * True if white can play move on the board, or false if white must set moves manually (by calling playMove() or playMoveSAN() method).
          */
