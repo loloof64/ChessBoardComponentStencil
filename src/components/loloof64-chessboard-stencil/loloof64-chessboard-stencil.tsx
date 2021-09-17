@@ -992,7 +992,7 @@ export class Loloof64ChessboardStencil {
           </div>
         </div>
 
-        <div id="last_move_layer" class={{ hidden_component: !this.lastMoveVisible || !this.lastMove }}>
+        <div id="last_move_layer" hidden = {!this.lastMoveVisible || !this.lastMove }>
           <div class="last_move_line" style={lastMoveBaseLineStyle}></div>
           <div class="last_move_line" style={lastMoveArrow1Style}></div>
           <div class="last_move_line" style={lastMoveArrow2Style}></div>
