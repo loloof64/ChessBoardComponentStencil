@@ -26,7 +26,7 @@ export namespace Components {
          */
         "lastMoveVisible": boolean;
         /**
-          * Tries to play the given move on the board, only if the current player is defined as an external user. Returns (boolean) true if and only if the move has been commited.
+          * Tries to play the given move on the board, only if the current player is defined as an external user. MoveAsParameter is simply an alias for the following : {  startFile: number;  startRank: number;  endFile: number;  endRank: number;  promotion?: string; }. startFile/startRank/endFile/endRank are in the range [0,7]. promotion valu can be 'n', 'b', 'r' or 'q' string. Returns (boolean) true if and only if the move has been commited.
          */
         "playMove": (move: MoveAsParameter) => Promise<boolean>;
         /**

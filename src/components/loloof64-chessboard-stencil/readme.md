@@ -73,6 +73,7 @@ Type: `Promise<string>`
 ### `playMove(move: MoveAsParameter) => Promise<boolean>`
 
 Tries to play the given move on the board, only if the current player is defined as an external user.
+
 Returns (boolean) true if and only if the move has been commited.
 
 #### Returns

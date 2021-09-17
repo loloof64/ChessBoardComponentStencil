@@ -209,6 +209,15 @@ export class Loloof64ChessboardStencil {
 
   /**
    * Tries to play the given move on the board, only if the current player is defined as an external user.
+   * MoveAsParameter is simply an alias for the following : {
+      startFile: number;
+      startRank: number;
+      endFile: number;
+      endRank: number;
+      promotion?: string;
+    }.
+   * startFile/startRank/endFile/endRank are in the range [0,7].
+   * promotion valu can be 'n', 'b', 'r' or 'q' string.
    * Returns (boolean) true if and only if the move has been commited.
    */
   @Method()
@@ -903,7 +912,7 @@ export class Loloof64ChessboardStencil {
           </div>
         </div>
 
-        <div id="last_move_layer" class={{'hidden_component' : !this.lastMoveVisible || !this.lastMove}}>
+        <div id="last_move_layer" class={{ hidden_component: !this.lastMoveVisible || !this.lastMove }}>
           <div class="last_move_line" style={lastMoveBaseLineStyle}></div>
           <div class="last_move_line" style={lastMoveArrow1Style}></div>
           <div class="last_move_line" style={lastMoveArrow2Style}></div>
