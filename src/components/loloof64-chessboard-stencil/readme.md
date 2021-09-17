@@ -71,6 +71,16 @@ Type: `Promise<string>`
 
 
 
+### `isWhiteTurn() => Promise<boolean>`
+
+True if it is white turn, false otherwise.
+
+#### Returns
+
+Type: `Promise<boolean>`
+
+
+
 ### `playMove(move: MoveAsParameter) => Promise<boolean>`
 
 Tries to play the given move on the board, only if the current player is defined as an external user.
@@ -108,6 +118,16 @@ Starts a new game.
 * startPositionFen: the requested position. If passed an empty string, will load
 default position. If passed illegal position, will throw an exception
 (with an english message as a string).
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `stop() => Promise<void>`
+
+Stops the current game (if any).
 
 #### Returns
 
