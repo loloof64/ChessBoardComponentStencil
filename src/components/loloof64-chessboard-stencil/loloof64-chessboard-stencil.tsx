@@ -844,9 +844,6 @@ export class Loloof64ChessboardStencil {
     const promotionRook = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_rlt45.svg') : getAssetPath('./assets/chess_vectors/Chess_rdt45.svg');
     const promotionQueen = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_qlt45.svg') : getAssetPath('./assets/chess_vectors/Chess_qdt45.svg');
 
-
-    const lastMoveArrowVisibility = this.lastMoveVisible && this.lastMove ? 'block' : 'none';
-
     return (
       <Fragment>
         <div id="lower_layer" key={this.refreshKey}>
@@ -906,7 +903,7 @@ export class Loloof64ChessboardStencil {
           </div>
         </div>
 
-        <div id="last_move_layer" style={{display: lastMoveArrowVisibility}}>
+        <div id="last_move_layer" class={{'hidden_component' : !this.lastMoveVisible || !this.lastMove}}>
           <div class="last_move_line" style={lastMoveBaseLineStyle}></div>
           <div class="last_move_line" style={lastMoveArrow1Style}></div>
           <div class="last_move_line" style={lastMoveArrow2Style}></div>

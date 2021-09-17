@@ -29,6 +29,7 @@ A chess board web component.
 | Property           | Attribute            | Description                                                                                                                          | Type      | Default |
 | ------------------ | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | --------- | ------- |
 | `blackPlayerHuman` | `black-player-human` | True if black can play move on the board, or false if black must set moves manually (by calling playMove() or playMoveSAN() method). | `boolean` | `true`  |
+| `lastMoveVisible`  | `last-move-visible`  | True if and only if last move arrow must be visible (if available).                                                                  | `boolean` | `true`  |
 | `reversed`         | `reversed`           | True if and only if the black side is at bottom.                                                                                     | `boolean` | `false` |
 | `whitePlayerHuman` | `white-player-human` | True if white can play move on the board, or false if white must set moves manually (by calling playMove() or playMoveSAN() method). | `boolean` | `true`  |
 

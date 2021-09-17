@@ -125,3 +125,7 @@
   position: absolute;
   background-color: var(--loloof64-chessboard-stencil-last-move-arrow-color, cadetBlue);
 }
+
+.hidden_component {
+  display: none;
+}
