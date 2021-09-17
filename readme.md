@@ -9,7 +9,29 @@ A chess board web component.
 
 ## A little word of caution
 
-When chaining methods/events, you may experience some update issues. Indeed, often the cpu needs some time in order to update the component state. If you run into such issues, don't hesitate to use setTimeout with some milliseconds or hundreds of milliseconds
+When chaining methods/events, you may experience some update issues. Indeed, often the cpu needs some time in order to update the component state. If you run into such issues, don't hesitate to use setTimeout with some milliseconds or hundreds of milliseconds.
+
+## Using this component
+
+There are three strategies we recommend for using web components built with Stencil.
+
+The first step for all three of these strategies is to [publish to NPM](https://docs.npmjs.com/getting-started/publishing-npm-packages).
+
+### Script tag
+
+- Put a script tag similar to this `<script src='https://unpkg.com/loloof64-chessboard-stencil@0.0.1/dist/loloof64-chessboard-stencil.esm.js'></script>` in the head of your index.html
+- Then you can use the element anywhere in your template, JSX, html etc
+
+### Node Modules
+- Run `npm install loloof64-chessboard-stencil --save`
+- Put a script tag similar to this `<script src='node_modules/loloof64-chessboard-stencil/dist/loloof64-chessboard-stencil.esm.js'></script>` in the head of your index.html
+- Then you can use the element anywhere in your template, JSX, html etc
+
+### In a stencil-starter app
+- Run `npm install loloof64-chessboard-stencil --save`
+- Add an import to the npm packages `import loloof64-chessboard-stencil;`
+- Then you can use the element anywhere in your template, JSX, html etc
+
 
 
 ## Credits
