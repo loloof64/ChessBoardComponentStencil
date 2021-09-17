@@ -11,6 +11,11 @@ A chess board web component.
 
 When chaining methods/events, you may experience some update issues. Indeed, often the cpu needs some time in order to update the component state. If you run into such issues, don't hesitate to use setTimeout with some milliseconds or hundreds of milliseconds
 
+
+## Credits
+
+Using chess vectors from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces).
+
 ## CSS variables
 
 | Name                                                | Description                                                | Default     |
