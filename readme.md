@@ -32,6 +32,44 @@ The first step for all three of these strategies is to [publish to NPM](https://
 - Add an import to the npm packages `import loloof64-chessboard-stencil;`
 - Then you can use the element anywhere in your template, JSX, html etc
 
+### Integration with VueJS
+
+Following [Stencil Documentation for Vue integration](https://stenciljs.com/docs/vue), we can use the following snippet (Vue2):
+
+```
+import Vue from 'vue';
+
+import { applyPolyfills, defineCustomElements } from 'loloof64-chessboard-stencil/loader';
+
+// Tell Vue to ignore all components defined in the loloof64-chessboard-stencil
+// package. The regex assumes all components names are prefixed
+// 'loloof64'
+Vue.config.ignoredElements = [/loloof64-\w*/];
+
+// Bind the custom elements to the window object
+applyPolyfills().then(() => {
+  defineCustomElements();
+});
+```
+
+For vue 3
+
+```
+import { createApp } from "vue";
+import { applyPolyfills, defineCustomElements } from 'loloof64-chessboard-stencil/loader';
+
+const app = createApp(/* options */);
+// Tell Vue to ignore all components defined in the loloof64-chessboard-stencil
+// package. The regex assumes all components names are prefixed
+// 'loloof64'
+app.config.compilerOptions.isCustomElement = tag => tag.startsWith('loloof64-');
+
+// Bind the custom elements to the window object
+applyPolyfills().then(() => {
+  defineCustomElements();
+});
+```
+
 
 
 ## Credits
