@@ -1,6 +1,6 @@
 {
   "name": "loloof64-chessboard-stencil",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "A chess board web component",
   "main": "dist/index.cjs.js",
   "module": "dist/custom-elements/index.js",
