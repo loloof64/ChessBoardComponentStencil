@@ -528,7 +528,7 @@ export class Loloof64ChessboardStencil {
 
     if (!pieceCode) return;
 
-    const path = `./assets/chess_vectors/Chess_${pieceCode}t45.svg`;
+    const path = `/assets/chess_vectors/Chess_${pieceCode}t45.svg`;
     return getAssetPath(path);
   }
 
@@ -893,18 +893,18 @@ export class Loloof64ChessboardStencil {
     } catch {}
 
     let draggedImage: string;
-    if (whitePawnDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_plt45.svg');
-    if (whiteKnightDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_nlt45.svg');
-    if (whiteBishopDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_blt45.svg');
-    if (whiteRookDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_rlt45.svg');
-    if (whiteQueenDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_qlt45.svg');
-    if (whiteKingDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_klt45.svg');
-    if (blackPawnDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_pdt45.svg');
-    if (blackKnightDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_ndt45.svg');
-    if (blackBishopDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_bdt45.svg');
-    if (blackRookDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_rdt45.svg');
-    if (blackQueenDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_qdt45.svg');
-    if (blackKingDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_kdt45.svg');
+    if (whitePawnDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_plt45.svg');
+    if (whiteKnightDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_nlt45.svg');
+    if (whiteBishopDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_blt45.svg');
+    if (whiteRookDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_rlt45.svg');
+    if (whiteQueenDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_qlt45.svg');
+    if (whiteKingDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_klt45.svg');
+    if (blackPawnDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_pdt45.svg');
+    if (blackKnightDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_ndt45.svg');
+    if (blackBishopDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_bdt45.svg');
+    if (blackRookDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_rdt45.svg');
+    if (blackQueenDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_qdt45.svg');
+    if (blackKingDragged) draggedImage = getAssetPath('/assets/chess_vectors/Chess_kdt45.svg');
 
     const draggedPieceStyle = draggedImage
       ? {
@@ -978,10 +978,10 @@ export class Loloof64ChessboardStencil {
         }
       : {};
 
-    const promotionKnight = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_nlt45.svg') : getAssetPath('./assets/chess_vectors/Chess_ndt45.svg');
-    const promotionBishop = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_blt45.svg') : getAssetPath('./assets/chess_vectors/Chess_bdt45.svg');
-    const promotionRook = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_rlt45.svg') : getAssetPath('./assets/chess_vectors/Chess_rdt45.svg');
-    const promotionQueen = this.logicalBoard.turn() === 'w' ? getAssetPath('./assets/chess_vectors/Chess_qlt45.svg') : getAssetPath('./assets/chess_vectors/Chess_qdt45.svg');
+    const promotionKnight = this.logicalBoard.turn() === 'w' ? getAssetPath('/assets/chess_vectors/Chess_nlt45.svg') : getAssetPath('/assets/chess_vectors/Chess_ndt45.svg');
+    const promotionBishop = this.logicalBoard.turn() === 'w' ? getAssetPath('/assets/chess_vectors/Chess_blt45.svg') : getAssetPath('/assets/chess_vectors/Chess_bdt45.svg');
+    const promotionRook = this.logicalBoard.turn() === 'w' ? getAssetPath('/assets/chess_vectors/Chess_rlt45.svg') : getAssetPath('/assets/chess_vectors/Chess_rdt45.svg');
+    const promotionQueen = this.logicalBoard.turn() === 'w' ? getAssetPath('/assets/chess_vectors/Chess_qlt45.svg') : getAssetPath('/assets/chess_vectors/Chess_qdt45.svg');
 
     return (
       <Fragment>
