@@ -336,10 +336,15 @@ export class Loloof64ChessboardStencil {
   @Method()
   async setPositionAndLastMove(data: ManualMoveSet): Promise<boolean> {
     if (this.gameRunning) return false;
-    const validArrowValues = data.fromFileIndex >= 0 && data.fromFileIndex <= 7
-      && data.fromRankIndex >= 0 && data.fromRankIndex <= 7 &&
-      data.toFileIndex >= 0 && data.toFileIndex <= 7 &&
-      data.toRankIndex >= 0 && data.toRankIndex <= 7;
+    const validArrowValues =
+      data.fromFileIndex >= 0 &&
+      data.fromFileIndex <= 7 &&
+      data.fromRankIndex >= 0 &&
+      data.fromRankIndex <= 7 &&
+      data.toFileIndex >= 0 &&
+      data.toFileIndex <= 7 &&
+      data.toRankIndex >= 0 &&
+      data.toRankIndex <= 7;
     if (validArrowValues && data.positionFen) {
       this.lastMove = {
         startFile: data.fromFileIndex,
@@ -355,7 +360,7 @@ export class Loloof64ChessboardStencil {
       startFile: undefined,
       startRank: undefined,
       endFile: undefined,
-      endRank: undefined
+      endRank: undefined,
     };
     this.logicalBoard = new Chess(this.firstPosition);
     return false;
@@ -370,7 +375,7 @@ export class Loloof64ChessboardStencil {
   gamePgn(whiteName: string, blackName: string, newLineChar: string = '\n', maxWidth?: number): Promise<string> {
     this.logicalBoard.header('White', whiteName);
     this.logicalBoard.header('Black', blackName);
-    return Promise.resolve(this.logicalBoard.pgn({newline_char: newLineChar, max_width: maxWidth}));
+    return Promise.resolve(this.logicalBoard.pgn({ newline_char: newLineChar, max_width: maxWidth }));
   }
 
   emitWaitingManualMoveIfPossible() {
@@ -857,19 +862,35 @@ export class Loloof64ChessboardStencil {
     const isWhiteTurn = this.logicalBoard.turn() === 'w';
     const turnClasses = isWhiteTurn ? 'turn--white' : 'turn--black';
 
-    const whitePawnDragged = this.dndPieceData.piece?.type === 'p' && this.dndPieceData.piece?.color === 'w';
-    const whiteKnightDragged = this.dndPieceData.piece?.type === 'n' && this.dndPieceData.piece?.color === 'w';
-    const whiteBishopDragged = this.dndPieceData.piece?.type === 'b' && this.dndPieceData.piece?.color === 'w';
-    const whiteRookDragged = this.dndPieceData.piece?.type === 'r' && this.dndPieceData.piece?.color === 'w';
-    const whiteQueenDragged = this.dndPieceData.piece?.type === 'q' && this.dndPieceData.piece?.color === 'w';
-    const whiteKingDragged = this.dndPieceData.piece?.type === 'k' && this.dndPieceData.piece?.color === 'w';
+    let whitePawnDragged = false;
+    let whiteKnightDragged = false;
+    let whiteBishopDragged = false;
+    let whiteRookDragged = false;
+    let whiteQueenDragged = false;
+    let whiteKingDragged = false;
 
-    const blackPawnDragged = this.dndPieceData.piece?.type === 'p' && this.dndPieceData.piece?.color === 'b';
-    const blackKnightDragged = this.dndPieceData.piece?.type === 'n' && this.dndPieceData.piece?.color === 'b';
-    const blackBishopDragged = this.dndPieceData.piece?.type === 'b' && this.dndPieceData.piece?.color === 'b';
-    const blackRookDragged = this.dndPieceData.piece?.type === 'r' && this.dndPieceData.piece?.color === 'b';
-    const blackQueenDragged = this.dndPieceData.piece?.type === 'q' && this.dndPieceData.piece?.color === 'b';
-    const blackKingDragged = this.dndPieceData.piece?.type === 'k' && this.dndPieceData.piece?.color === 'b';
+    let blackPawnDragged = false;
+    let blackKnightDragged = false;
+    let blackBishopDragged = false;
+    let blackRookDragged = false;
+    let blackQueenDragged = false;
+    let blackKingDragged = false;
+
+    try {
+      whitePawnDragged = this.dndPieceData.piece.type === 'p' && this.dndPieceData.piece.color === 'w';
+      whiteKnightDragged = this.dndPieceData.piece.type === 'n' && this.dndPieceData.piece.color === 'w';
+      whiteBishopDragged = this.dndPieceData.piece.type === 'b' && this.dndPieceData.piece.color === 'w';
+      whiteRookDragged = this.dndPieceData.piece.type === 'r' && this.dndPieceData.piece.color === 'w';
+      whiteQueenDragged = this.dndPieceData.piece.type === 'q' && this.dndPieceData.piece.color === 'w';
+      whiteKingDragged = this.dndPieceData.piece.type === 'k' && this.dndPieceData.piece.color === 'w';
+
+      blackPawnDragged = this.dndPieceData.piece.type === 'p' && this.dndPieceData.piece.color === 'b';
+      blackKnightDragged = this.dndPieceData.piece.type === 'n' && this.dndPieceData.piece.color === 'b';
+      blackBishopDragged = this.dndPieceData.piece.type === 'b' && this.dndPieceData.piece.color === 'b';
+      blackRookDragged = this.dndPieceData.piece.type === 'r' && this.dndPieceData.piece.color === 'b';
+      blackQueenDragged = this.dndPieceData.piece.type === 'q' && this.dndPieceData.piece.color === 'b';
+      blackKingDragged = this.dndPieceData.piece.type === 'k' && this.dndPieceData.piece.color === 'b';
+    } catch {}
 
     let draggedImage: string;
     if (whitePawnDragged) draggedImage = getAssetPath('./assets/chess_vectors/Chess_plt45.svg');
@@ -1021,7 +1042,7 @@ export class Loloof64ChessboardStencil {
           </div>
         </div>
 
-        <div id="last_move_layer" hidden = {!this.lastMoveVisible || !this.lastMove }>
+        <div id="last_move_layer" hidden={!this.lastMoveVisible || !this.lastMove}>
           <div class="last_move_line" style={lastMoveBaseLineStyle}></div>
           <div class="last_move_line" style={lastMoveArrow1Style}></div>
           <div class="last_move_line" style={lastMoveArrow2Style}></div>
